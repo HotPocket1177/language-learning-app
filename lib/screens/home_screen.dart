@@ -13,202 +13,240 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Japanese Study'),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Consumer<StudyProvider>(
-          builder: (context, provider, child) {
-            final stats = provider.userStats;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Consumer<StudyProvider>(
+      builder: (context, provider, child) {
+        final selectedLang = provider.selectedLanguage;
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Welcome Card
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
+                if (selectedLang != null) ...[
+                  Text(selectedLang.flag),
+                  const SizedBox(width: 8),
+                ],
+                Text('${selectedLang?.displayName ?? 'Language'} Study'),
+              ],
+            ),
+            centerTitle: true,
+            actions: [
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'change_language') {
+                    Navigator.of(context).pushReplacementNamed('/language-selector');
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'change_language',
+                    child: Row(
                       children: [
-                        Text(
-                          'ようこそ, ${stats.userName}!',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Welcome back!',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                        Icon(Icons.language, color: Color(0xFF8b6f47)),
+                        SizedBox(width: 8),
+                        Text('Change Language'),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                // Stats Row
-                Row(
+                ],
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Consumer<StudyProvider>(
+              builder: (context, innerProvider, child) {
+                final stats = innerProvider.userStats;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: _StatCard(
-                        icon: Icons.star,
-                        title: 'Level',
-                        value: '${stats.level}',
-                        color: const Color(0xFF8b6f47),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _StatCard(
-                        icon: Icons.local_fire_department,
-                        title: 'Streak',
-                        value: '${stats.currentStreak}',
-                        color: Colors.orange,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // XP Progress Card
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Welcome Card
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
                           children: [
                             Text(
-                              'Experience',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: const Color(0xFF8b6f47),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              'Welcome, ${stats.userName}!',
+                              style: Theme.of(context).textTheme.headlineMedium,
                             ),
+                            const SizedBox(height: 8),
                             Text(
-                              '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
+                              'Keep learning!',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
-                            minHeight: 20,
-                            backgroundColor: Colors.grey[300],
-                            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Stats Row
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _StatCard(
+                            icon: Icons.star,
+                            title: 'Level',
+                            value: '${stats.level}',
+                            color: const Color(0xFF8b6f47),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _StatCard(
+                            icon: Icons.local_fire_department,
+                            title: 'Streak',
+                            value: '${stats.currentStreak}',
+                            color: Colors.orange,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                const SizedBox(height: 24),
+                    const SizedBox(height: 16),
 
-                // Study Sections
-                Text(
-                  'Study',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: const Color(0xFF8b6f47),
-                        fontWeight: FontWeight.bold,
+                    // XP Progress Card
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Experience',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                        color: const Color(0xFF8b6f47),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                Text(
+                                  '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: LinearProgressIndicator(
+                                value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
+                                minHeight: 20,
+                                backgroundColor: Colors.grey[300],
+                                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey[600],
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
-                ),
-                const SizedBox(height: 12),
+                    ),
+                    const SizedBox(height: 24),
 
-                _MenuButton(
-                  icon: Icons.book,
-                  title: 'Vocabulary',
-                  subtitle: '${provider.availableVocabulary.length} words available',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const VocabularyScreen()),
-                  ),
-                ),
-                const SizedBox(height: 12),
+                    // Study Sections
+                    Text(
+                      'Study',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: const Color(0xFF8b6f47),
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
 
-                _MenuButton(
-                  icon: Icons.chat_bubble,
-                  title: 'Sentences',
-                  subtitle: '${provider.availableSentences.length} sentences available',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SentencesScreen()),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                _MenuButton(
-                  icon: Icons.language,
-                  title: 'Kanji Lessons',
-                  subtitle: '${provider.availableKanji.length} kanji available',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const KanjiScreen()),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Practice Sections
-                Text(
-                  'Your Progress',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: const Color(0xFF8b6f47),
-                        fontWeight: FontWeight.bold,
+                    _MenuButton(
+                      icon: Icons.book,
+                      title: 'Vocabulary',
+                      subtitle: '${innerProvider.availableVocabulary.length} words available',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const VocabularyScreen()),
                       ),
-                ),
-                const SizedBox(height: 12),
+                    ),
+                    const SizedBox(height: 12),
 
-                _MenuButton(
-                  icon: Icons.grid_view,
-                  title: 'Mastered Gallery',
-                  subtitle:
-                      '${stats.totalWordsLearned + stats.totalSentencesLearned} items mastered',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MasteredGalleryScreen()),
-                  ),
-                ),
-                const SizedBox(height: 12),
+                    _MenuButton(
+                      icon: Icons.chat_bubble,
+                      title: 'Sentences',
+                      subtitle: '${innerProvider.availableSentences.length} sentences available',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SentencesScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
 
-                _MenuButton(
-                  icon: Icons.fitness_center,
-                  title: 'Practice Deck',
-                  subtitle:
-                      '${provider.practiceVocabulary.length + provider.practiceSentences.length} items to practice',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const PracticeDeckScreen()),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                _MenuButton(
-                  icon: Icons.person,
-                  title: 'Profile',
-                  subtitle: 'View your achievements',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                  ),
-                ),
+                    if (provider.hasSpecialContent)
+                      _MenuButton(
+                        icon: Icons.language,
+                        title: 'Kanji Lessons',
+                        subtitle: '${innerProvider.availableKanji.length} kanji available',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const KanjiScreen()),
+                        ),
+                      ),
+                    if (provider.hasSpecialContent) const SizedBox(height: 12),
                 const SizedBox(height: 24),
-              ],
-            );
-          },
-        ),
-      ),
+
+                    // Practice Sections
+                    Text(
+                      'Your Progress',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: const Color(0xFF8b6f47),
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    _MenuButton(
+                      icon: Icons.grid_view,
+                      title: 'Mastered Gallery',
+                      subtitle:
+                          '${stats.totalWordsLearned + stats.totalSentencesLearned} items mastered',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MasteredGalleryScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    _MenuButton(
+                      icon: Icons.fitness_center,
+                      title: 'Practice Deck',
+                      subtitle:
+                          '${innerProvider.practiceVocabulary.length + innerProvider.practiceSentences.length} items to practice',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PracticeDeckScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    _MenuButton(
+                      icon: Icons.person,
+                      title: 'Profile',
+                      subtitle: 'View your achievements',
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

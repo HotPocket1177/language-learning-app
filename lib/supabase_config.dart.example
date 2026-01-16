@@ -1,0 +1,11 @@
+// RENAME THIS FILE TO: supabase_config.dart
+// Then add your Supabase credentials from https://supabase.com/dashboard/project/_/settings/api
+
+class SupabaseConfig {
+  static const String supabaseUrl = 'YOUR_SUPABASE_URL_HERE';
+  static const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY_HERE';
+}
+
+// Example:
+// static const String supabaseUrl = 'https://xxxxxxxxxxxxx.supabase.co';
+// static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';

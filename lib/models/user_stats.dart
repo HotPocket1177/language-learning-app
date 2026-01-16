@@ -3,6 +3,7 @@ class UserStats {
   int xp;
   int level;
   int currentStreak;
+  int longestStreak;
   DateTime? lastStudyDate;
   int totalWordsLearned;
   int totalSentencesLearned;
@@ -13,6 +14,7 @@ class UserStats {
     this.xp = 0,
     this.level = 1,
     this.currentStreak = 0,
+    this.longestStreak = 0,
     this.lastStudyDate,
     this.totalWordsLearned = 0,
     this.totalSentencesLearned = 0,
@@ -46,6 +48,12 @@ class UserStats {
         currentStreak = 1;
       }
     }
+
+    // Update longest streak
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak;
+    }
+
     lastStudyDate = now;
   }
 
@@ -55,6 +63,7 @@ class UserStats {
       'xp': xp,
       'level': level,
       'currentStreak': currentStreak,
+      'longestStreak': longestStreak,
       'lastStudyDate': lastStudyDate?.toIso8601String(),
       'totalWordsLearned': totalWordsLearned,
       'totalSentencesLearned': totalSentencesLearned,
@@ -68,6 +77,7 @@ class UserStats {
       xp: json['xp'] ?? 0,
       level: json['level'] ?? 1,
       currentStreak: json['currentStreak'] ?? 0,
+      longestStreak: json['longestStreak'] ?? 0,
       lastStudyDate: json['lastStudyDate'] != null
           ? DateTime.parse(json['lastStudyDate'])
           : null,
