@@ -7,6 +7,8 @@ import 'kanji_screen.dart';
 import 'mastered_gallery_screen.dart';
 import 'practice_deck_screen.dart';
 import 'profile_screen.dart';
+import 'settings_screen.dart';
+import 'review_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -35,9 +37,24 @@ class HomeScreen extends StatelessWidget {
                 onSelected: (value) {
                   if (value == 'change_language') {
                     Navigator.of(context).pushReplacementNamed('/language-selector');
+                  } else if (value == 'settings') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                    );
                   }
                 },
                 itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'settings',
+                    child: Row(
+                      children: [
+                        Icon(Icons.settings, color: Color(0xFF8b6f47)),
+                        SizedBox(width: 8),
+                        Text('Settings'),
+                      ],
+                    ),
+                  ),
                   const PopupMenuItem(
                     value: 'change_language',
                     child: Row(
@@ -147,6 +164,15 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Daily Review Card
+                    _DailyReviewCard(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ReviewScreen()),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -346,6 +372,129 @@ class _MenuButton extends StatelessWidget {
                 ),
               ),
               const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyReviewCard extends StatefulWidget {
+  final VoidCallback onTap;
+
+  const _DailyReviewCard({required this.onTap});
+
+  @override
+  State<_DailyReviewCard> createState() => _DailyReviewCardState();
+}
+
+class _DailyReviewCardState extends State<_DailyReviewCard> {
+  int _dueCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDueCount();
+  }
+
+  Future<void> _loadDueCount() async {
+    final provider = Provider.of<StudyProvider>(context, listen: false);
+    await provider.loadDueReviews();
+    if (mounted) {
+      setState(() {
+        _dueCount = provider.dueReviewCount;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: _dueCount > 0 ? const Color(0xFF8b6f47) : Colors.white,
+      child: InkWell(
+        onTap: widget.onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _dueCount > 0
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.replay,
+                  color: _dueCount > 0 ? Colors.white : const Color(0xFF8b6f47),
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Daily Review',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: _dueCount > 0 ? Colors.white : const Color(0xFF8b6f47),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    _isLoading
+                        ? Text(
+                            'Loading...',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _dueCount > 0
+                                  ? Colors.white.withValues(alpha: 0.8)
+                                  : Colors.grey[600],
+                            ),
+                          )
+                        : Text(
+                            _dueCount > 0
+                                ? '$_dueCount items due for review'
+                                : 'All caught up!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _dueCount > 0
+                                  ? Colors.white.withValues(alpha: 0.9)
+                                  : Colors.grey[600],
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+              if (_dueCount > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Start',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF8b6f47),
+                    ),
+                  ),
+                )
+              else
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green.shade400,
+                  size: 28,
+                ),
             ],
           ),
         ),

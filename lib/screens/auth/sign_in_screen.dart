@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../services/auth_service.dart';
+import '../../providers/study_provider.dart';
+import '../home_screen.dart';
+import '../language_selector_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -29,15 +33,39 @@ class _SignInScreenState extends State<SignInScreen> {
 
     setState(() => _isLoading = true);
 
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
     try {
-      await AuthService().signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
+      final response = await AuthService().signIn(
+        email: email,
+        password: password,
       );
 
       if (mounted) {
-        // Navigation will be handled by auth state listener in main.dart
-        Navigator.of(context).pop();
+        if (response.user != null && response.session != null) {
+          // Load user data then navigate directly (bypassing AuthGate listener)
+          final provider = Provider.of<StudyProvider>(context, listen: false);
+          await provider.loadData();
+
+          if (mounted) {
+            final destination = provider.selectedLanguage == null
+                ? const LanguageSelectorScreen()
+                : const HomeScreen();
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => destination),
+              (route) => false,
+            );
+          }
+        } else {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign in failed. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {

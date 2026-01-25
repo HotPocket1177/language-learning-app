@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_stats.dart';
+import '../models/user_settings.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
+import '../models/review_item.dart';
 import 'supabase_service.dart';
 
 class DatabaseService {
@@ -18,19 +20,22 @@ class DatabaseService {
     required String selectedLanguage,
   }) async {
     try {
-      await _supabase.from('user_stats').upsert({
-        'user_id': userId,
-        'level': stats.level,
-        'xp': stats.xp,
-        'total_xp': stats.xp, // Can track total XP separately if needed
-        'current_streak': stats.currentStreak,
-        'longest_streak': stats.longestStreak,
-        'last_study_date': stats.lastStudyDate?.toIso8601String(),
-        'selected_language': selectedLanguage,
-        'total_words_learned': stats.totalWordsLearned,
-        'total_sentences_learned': stats.totalSentencesLearned,
-        'total_kanji_learned': stats.totalKanjiLearned,
-      });
+      await _supabase.from('user_stats').upsert(
+        {
+          'user_id': userId,
+          'level': stats.level,
+          'xp': stats.xp,
+          'total_xp': stats.xp, // Can track total XP separately if needed
+          'current_streak': stats.currentStreak,
+          'longest_streak': stats.longestStreak,
+          'last_study_date': stats.lastStudyDate?.toIso8601String(),
+          'selected_language': selectedLanguage,
+          'total_words_learned': stats.totalWordsLearned,
+          'total_sentences_learned': stats.totalSentencesLearned,
+          'total_kanji_learned': stats.totalKanjiLearned,
+        },
+        onConflict: 'user_id',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save stats: ${e.message}';
     } catch (e) {
@@ -66,17 +71,20 @@ class DatabaseService {
     required VocabularyItem item,
   }) async {
     try {
-      await _supabase.from('mastered_items').upsert({
-        'user_id': userId,
-        'item_id': item.id,
-        'item_type': 'vocabulary',
-        'language_code': languageCode,
-        'japanese_text': item.japanese,
-        'romaji_text': item.romaji,
-        'english_text': item.english,
-        'category': item.category,
-        'user_note': item.userNote,
-      });
+      await _supabase.from('mastered_items').upsert(
+        {
+          'user_id': userId,
+          'item_id': item.id,
+          'item_type': 'vocabulary',
+          'language_code': languageCode,
+          'japanese_text': item.japanese,
+          'romaji_text': item.romaji,
+          'english_text': item.english,
+          'category': item.category,
+          'user_note': item.userNote,
+        },
+        onConflict: 'user_id,item_id,language_code',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save mastered vocabulary: ${e.message}';
     } catch (e) {
@@ -91,17 +99,20 @@ class DatabaseService {
     required SentenceItem item,
   }) async {
     try {
-      await _supabase.from('mastered_items').upsert({
-        'user_id': userId,
-        'item_id': item.id,
-        'item_type': 'sentence',
-        'language_code': languageCode,
-        'japanese_text': item.japanese,
-        'romaji_text': item.romaji,
-        'english_text': item.english,
-        'category': item.category,
-        'user_note': item.userNote,
-      });
+      await _supabase.from('mastered_items').upsert(
+        {
+          'user_id': userId,
+          'item_id': item.id,
+          'item_type': 'sentence',
+          'language_code': languageCode,
+          'japanese_text': item.japanese,
+          'romaji_text': item.romaji,
+          'english_text': item.english,
+          'category': item.category,
+          'user_note': item.userNote,
+        },
+        onConflict: 'user_id,item_id,language_code',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save mastered sentence: ${e.message}';
     } catch (e) {
@@ -117,16 +128,19 @@ class DatabaseService {
     required String kanjiText,
   }) async {
     try {
-      await _supabase.from('mastered_items').upsert({
-        'user_id': userId,
-        'item_id': kanjiId,
-        'item_type': 'kanji',
-        'language_code': languageCode,
-        'japanese_text': kanjiText,
-        'romaji_text': '',
-        'english_text': kanjiText,
-        'category': 'Kanji',
-      });
+      await _supabase.from('mastered_items').upsert(
+        {
+          'user_id': userId,
+          'item_id': kanjiId,
+          'item_type': 'kanji',
+          'language_code': languageCode,
+          'japanese_text': kanjiText,
+          'romaji_text': '',
+          'english_text': kanjiText,
+          'category': 'Kanji',
+        },
+        onConflict: 'user_id,item_id,language_code',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save mastered kanji: ${e.message}';
     } catch (e) {
@@ -228,16 +242,19 @@ class DatabaseService {
     required VocabularyItem item,
   }) async {
     try {
-      await _supabase.from('practice_items').upsert({
-        'user_id': userId,
-        'item_id': item.id,
-        'item_type': 'vocabulary',
-        'language_code': languageCode,
-        'japanese_text': item.japanese,
-        'romaji_text': item.romaji,
-        'english_text': item.english,
-        'category': item.category,
-      });
+      await _supabase.from('practice_items').upsert(
+        {
+          'user_id': userId,
+          'item_id': item.id,
+          'item_type': 'vocabulary',
+          'language_code': languageCode,
+          'japanese_text': item.japanese,
+          'romaji_text': item.romaji,
+          'english_text': item.english,
+          'category': item.category,
+        },
+        onConflict: 'user_id,item_id,language_code',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save practice vocabulary: ${e.message}';
     } catch (e) {
@@ -252,16 +269,19 @@ class DatabaseService {
     required SentenceItem item,
   }) async {
     try {
-      await _supabase.from('practice_items').upsert({
-        'user_id': userId,
-        'item_id': item.id,
-        'item_type': 'sentence',
-        'language_code': languageCode,
-        'japanese_text': item.japanese,
-        'romaji_text': item.romaji,
-        'english_text': item.english,
-        'category': item.category,
-      });
+      await _supabase.from('practice_items').upsert(
+        {
+          'user_id': userId,
+          'item_id': item.id,
+          'item_type': 'sentence',
+          'language_code': languageCode,
+          'japanese_text': item.japanese,
+          'romaji_text': item.romaji,
+          'english_text': item.english,
+          'category': item.category,
+        },
+        onConflict: 'user_id,item_id,language_code',
+      );
     } on PostgrestException catch (e) {
       throw 'Failed to save practice sentence: ${e.message}';
     } catch (e) {
@@ -434,6 +454,214 @@ class DatabaseService {
       }
     } catch (e) {
       throw 'Failed to sync all data: $e';
+    }
+  }
+
+  // ============================================
+  // USER SETTINGS METHODS
+  // ============================================
+
+  /// Load user settings
+  Future<UserSettings> loadUserSettings(String userId) async {
+    try {
+      final response = await _supabase
+          .from('user_settings')
+          .select()
+          .eq('user_id', userId)
+          .maybeSingle();
+
+      if (response == null) {
+        return const UserSettings();
+      }
+      return UserSettings.fromJson(response);
+    } on PostgrestException {
+      return const UserSettings();
+    } catch (_) {
+      return const UserSettings();
+    }
+  }
+
+  /// Save user settings
+  Future<void> saveUserSettings({
+    required String userId,
+    required UserSettings settings,
+  }) async {
+    try {
+      await _supabase.from('user_settings').upsert(
+        {
+          'user_id': userId,
+          ...settings.toJson(),
+        },
+        onConflict: 'user_id',
+      );
+    } on PostgrestException catch (e) {
+      throw 'Failed to save settings: ${e.message}';
+    } catch (e) {
+      throw 'Failed to save settings: $e';
+    }
+  }
+
+  // ============================================
+  // SRS (SPACED REPETITION) METHODS
+  // ============================================
+
+  /// Update SRS data for a mastered vocabulary item
+  Future<void> updateVocabularySrs({
+    required String userId,
+    required String languageCode,
+    required VocabularyItem item,
+  }) async {
+    try {
+      await _supabase.from('mastered_items').update({
+        'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
+        'review_interval': item.reviewInterval,
+        'times_reviewed': item.timesReviewed,
+        'ease_factor': item.easeFactor,
+        'user_note': item.userNote,
+      }).eq('user_id', userId).eq('item_id', item.id).eq('language_code', languageCode);
+    } on PostgrestException catch (e) {
+      throw 'Failed to update SRS data: ${e.message}';
+    } catch (e) {
+      throw 'Failed to update SRS data: $e';
+    }
+  }
+
+  /// Update SRS data for a mastered sentence item
+  Future<void> updateSentenceSrs({
+    required String userId,
+    required String languageCode,
+    required SentenceItem item,
+  }) async {
+    try {
+      await _supabase.from('mastered_items').update({
+        'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
+        'review_interval': item.reviewInterval,
+        'times_reviewed': item.timesReviewed,
+        'ease_factor': item.easeFactor,
+        'user_note': item.userNote,
+      }).eq('user_id', userId).eq('item_id', item.id).eq('language_code', languageCode);
+    } on PostgrestException catch (e) {
+      throw 'Failed to update SRS data: ${e.message}';
+    } catch (e) {
+      throw 'Failed to update SRS data: $e';
+    }
+  }
+
+  /// Load vocabulary items due for review
+  Future<List<VocabularyItem>> loadDueVocabulary({
+    required String userId,
+    required String languageCode,
+    int? limit,
+  }) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      var query = _supabase
+          .from('mastered_items')
+          .select()
+          .eq('user_id', userId)
+          .eq('language_code', languageCode)
+          .eq('item_type', 'vocabulary')
+          .or('next_review_date.is.null,next_review_date.lte.$today')
+          .order('next_review_date', ascending: true);
+
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      final response = await query;
+
+      return (response as List).map((item) {
+        return VocabularyItem(
+          id: item['item_id'] as String,
+          japanese: item['japanese_text'] as String,
+          romaji: item['romaji_text'] as String? ?? '',
+          english: item['english_text'] as String,
+          category: item['category'] as String? ?? 'General',
+          userNote: item['user_note'] as String?,
+          srsData: SrsData(
+            nextReviewDate: item['next_review_date'] != null
+                ? DateTime.parse(item['next_review_date'])
+                : null,
+            reviewInterval: item['review_interval'] ?? 1,
+            timesReviewed: item['times_reviewed'] ?? 0,
+            easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+          ),
+        );
+      }).toList();
+    } on PostgrestException catch (e) {
+      throw 'Failed to load due vocabulary: ${e.message}';
+    } catch (e) {
+      throw 'Failed to load due vocabulary: $e';
+    }
+  }
+
+  /// Load sentences due for review
+  Future<List<SentenceItem>> loadDueSentences({
+    required String userId,
+    required String languageCode,
+    int? limit,
+  }) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      var query = _supabase
+          .from('mastered_items')
+          .select()
+          .eq('user_id', userId)
+          .eq('language_code', languageCode)
+          .eq('item_type', 'sentence')
+          .or('next_review_date.is.null,next_review_date.lte.$today')
+          .order('next_review_date', ascending: true);
+
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      final response = await query;
+
+      return (response as List).map((item) {
+        return SentenceItem(
+          id: item['item_id'] as String,
+          japanese: item['japanese_text'] as String,
+          romaji: item['romaji_text'] as String? ?? '',
+          english: item['english_text'] as String,
+          category: item['category'] as String? ?? 'General',
+          userNote: item['user_note'] as String?,
+          srsData: SrsData(
+            nextReviewDate: item['next_review_date'] != null
+                ? DateTime.parse(item['next_review_date'])
+                : null,
+            reviewInterval: item['review_interval'] ?? 1,
+            timesReviewed: item['times_reviewed'] ?? 0,
+            easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+          ),
+        );
+      }).toList();
+    } on PostgrestException catch (e) {
+      throw 'Failed to load due sentences: ${e.message}';
+    } catch (e) {
+      throw 'Failed to load due sentences: $e';
+    }
+  }
+
+  /// Get count of items due for review
+  Future<int> getDueReviewCount({
+    required String userId,
+    required String languageCode,
+  }) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final response = await _supabase
+          .from('mastered_items')
+          .select('item_id')
+          .eq('user_id', userId)
+          .eq('language_code', languageCode)
+          .or('next_review_date.is.null,next_review_date.lte.$today');
+
+      return (response as List).length;
+    } on PostgrestException {
+      return 0;
+    } catch (_) {
+      return 0;
     }
   }
 }

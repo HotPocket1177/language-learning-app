@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/study_provider.dart';
 import '../../services/auth_service.dart';
+import '../language_selector_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -35,7 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await AuthService().signUp(
+      final response = await AuthService().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
         username: _usernameController.text.trim(),
@@ -51,8 +54,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
 
-        // Navigate back - auth state listener will handle navigation to home
-        Navigator.of(context).pop();
+        // If session exists (auto-confirmed), navigate directly to language selector
+        if (response.session != null) {
+          final provider = Provider.of<StudyProvider>(context, listen: false);
+          await provider.loadData();
+
+          if (mounted) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LanguageSelectorScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          // Email confirmation required - return to welcome screen
+          Navigator.of(context).pop();
+        }
       }
     } catch (e) {
       if (mounted) {

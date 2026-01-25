@@ -32,13 +32,55 @@ class _PracticeDeckScreenState extends State<PracticeDeckScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Practice Deck'),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Vocabulary'),
-            Tab(text: 'Sentences'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicatorColor: Colors.white,
+              indicatorWeight: 3,
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              labelStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 24),
+              tabs: const [
+                Tab(
+                  height: 52,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.text_fields, size: 20),
+                      SizedBox(width: 8),
+                      Text('Vocabulary'),
+                    ],
+                  ),
+                ),
+                Tab(
+                  height: 52,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.format_quote, size: 20),
+                      SizedBox(width: 8),
+                      Text('Sentences'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
       body: Consumer<StudyProvider>(

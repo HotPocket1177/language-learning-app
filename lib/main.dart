@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/study_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/language_selector_screen.dart';
 import 'screens/auth/welcome_screen.dart';
 import 'services/supabase_service.dart';
-import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Supabase
+  // Initialize Supabase (app works offline if this fails)
   try {
     await SupabaseService.initialize();
-  } catch (e) {
-    debugPrint('Failed to initialize Supabase: $e');
-    // Continue anyway - app will work in offline mode
+  } catch (_) {
+    // Continue in offline mode
   }
 
   runApp(const MyApp());
@@ -94,38 +93,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Simple auth gate that checks session state once at app start.
+/// Post-login navigation is handled directly in SignInScreen/SignUpScreen.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: AuthService().authStateChanges,
-      builder: (context, snapshot) {
-        // Show loading while checking auth state
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: Color(0xFFF5EBE0),
-            body: Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
-              ),
-            ),
-          );
-        }
-
-        // Check if user is signed in
-        final isSignedIn = snapshot.hasData && snapshot.data?.session != null;
-
-        if (isSignedIn) {
-          // User is signed in - show AppInitializer
-          return const AppInitializer();
-        } else {
-          // User is not signed in - show Welcome screen
-          return const WelcomeScreen();
-        }
-      },
-    );
+    final session = Supabase.instance.client.auth.currentSession;
+    return session != null ? const AppInitializer() : const WelcomeScreen();
   }
 }
 
@@ -150,8 +126,8 @@ class _AppInitializerState extends State<AppInitializer> {
 
     try {
       await provider.loadData();
-    } catch (e) {
-      debugPrint('Error loading data: $e');
+    } catch (_) {
+      // Data load failed - will use defaults
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

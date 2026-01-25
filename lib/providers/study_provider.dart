@@ -5,6 +5,8 @@ import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
 import '../models/kanji_item.dart';
 import '../models/user_stats.dart';
+import '../models/user_settings.dart';
+import '../models/review_item.dart';
 import '../models/language_content.dart';
 import '../data/language_data.dart';
 import '../services/auth_service.dart';
@@ -16,20 +18,32 @@ class StudyProvider with ChangeNotifier {
 
   SupportedLanguage? _selectedLanguage;
   UserStats _userStats = UserStats();
+  UserSettings _userSettings = const UserSettings();
   List<VocabularyItem> _masteredVocabulary = [];
   List<SentenceItem> _masteredSentences = [];
   List<String> _masteredKanji = [];
   List<VocabularyItem> _practiceVocabulary = [];
   List<SentenceItem> _practiceSentences = [];
 
+  // SRS review queues
+  List<VocabularyItem> _dueVocabulary = [];
+  List<SentenceItem> _dueSentences = [];
+  int _dueReviewCount = 0;
+
   // Getters
   SupportedLanguage? get selectedLanguage => _selectedLanguage;
   UserStats get userStats => _userStats;
+  UserSettings get userSettings => _userSettings;
   List<VocabularyItem> get masteredVocabulary => _masteredVocabulary;
   List<SentenceItem> get masteredSentences => _masteredSentences;
   List<String> get masteredKanji => _masteredKanji;
   List<VocabularyItem> get practiceVocabulary => _practiceVocabulary;
   List<SentenceItem> get practiceSentences => _practiceSentences;
+
+  // SRS getters
+  List<VocabularyItem> get dueVocabulary => _dueVocabulary;
+  List<SentenceItem> get dueSentences => _dueSentences;
+  int get dueReviewCount => _dueReviewCount;
 
   // Auth getters
   bool get isSignedIn => _authService.isSignedIn;
@@ -80,7 +94,7 @@ class StudyProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedLanguage', language.code);
 
-    // Save to Supabase if signed in
+    // Sync to Supabase if signed in
     if (isSignedIn && currentUserId != null) {
       try {
         await _databaseService.saveUserStats(
@@ -88,8 +102,8 @@ class StudyProvider with ChangeNotifier {
           stats: _userStats,
           selectedLanguage: language.code,
         );
-      } catch (e) {
-        debugPrint('Failed to save language to Supabase: $e');
+      } catch (_) {
+        // Sync failed - data saved locally
       }
     }
 
@@ -103,8 +117,8 @@ class StudyProvider with ChangeNotifier {
       try {
         await _loadFromSupabase();
         return;
-      } catch (e) {
-        debugPrint('Failed to load from Supabase, using local storage: $e');
+      } catch (_) {
+        // Supabase load failed - fall back to local storage
       }
     }
 
@@ -279,9 +293,8 @@ class StudyProvider with ChangeNotifier {
           practiceVocabulary: _practiceVocabulary,
           practiceSentences: _practiceSentences,
         );
-      } catch (e) {
-        debugPrint('Failed to sync to Supabase: $e');
-        // Continue anyway - data is saved locally
+      } catch (_) {
+        // Sync failed - data saved locally
       }
     }
   }
@@ -297,7 +310,7 @@ class StudyProvider with ChangeNotifier {
 
       await _saveData();
 
-      // Save individual item to Supabase
+      // Sync to Supabase
       if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
         try {
           await _databaseService.saveMasteredVocabulary(
@@ -305,8 +318,8 @@ class StudyProvider with ChangeNotifier {
             languageCode: _selectedLanguage!.code,
             item: item,
           );
-        } catch (e) {
-          debugPrint('Failed to save mastered vocabulary to Supabase: $e');
+        } catch (_) {
+          // Sync failed - saved locally
         }
       }
 
@@ -325,7 +338,7 @@ class StudyProvider with ChangeNotifier {
 
       await _saveData();
 
-      // Save individual item to Supabase
+      // Sync to Supabase
       if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
         try {
           await _databaseService.saveMasteredSentence(
@@ -333,8 +346,8 @@ class StudyProvider with ChangeNotifier {
             languageCode: _selectedLanguage!.code,
             item: item,
           );
-        } catch (e) {
-          debugPrint('Failed to save mastered sentence to Supabase: $e');
+        } catch (_) {
+          // Sync failed - saved locally
         }
       }
 
@@ -352,7 +365,7 @@ class StudyProvider with ChangeNotifier {
 
       await _saveData();
 
-      // Save individual item to Supabase
+      // Sync to Supabase
       if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
         try {
           await _databaseService.saveMasteredKanji(
@@ -361,8 +374,8 @@ class StudyProvider with ChangeNotifier {
             kanjiId: kanjiId,
             kanjiText: kanjiId,
           );
-        } catch (e) {
-          debugPrint('Failed to save mastered kanji to Supabase: $e');
+        } catch (_) {
+          // Sync failed - saved locally
         }
       }
 
@@ -399,6 +412,20 @@ class StudyProvider with ChangeNotifier {
 
   Future<void> removeSentenceFromPractice(String id) async {
     _practiceSentences.removeWhere((e) => e.id == id);
+    await _saveData();
+    notifyListeners();
+  }
+
+  // Remove vocabulary from mastered
+  Future<void> removeMasteredVocabulary(String id) async {
+    _masteredVocabulary.removeWhere((e) => e.id == id);
+    await _saveData();
+    notifyListeners();
+  }
+
+  // Remove sentence from mastered
+  Future<void> removeMasteredSentence(String id) async {
+    _masteredSentences.removeWhere((e) => e.id == id);
     await _saveData();
     notifyListeners();
   }
@@ -451,5 +478,313 @@ class StudyProvider with ChangeNotifier {
     final content = currentLanguageContent;
     if (content == null) return [];
     return content.sentences.map((e) => e.category).toSet().toList()..sort();
+  }
+
+  // ============================================
+  // SETTINGS METHODS
+  // ============================================
+
+  /// Load user settings from Supabase or local storage
+  Future<UserSettings> loadSettings() async {
+    if (isSignedIn && currentUserId != null) {
+      try {
+        _userSettings = await _databaseService.loadUserSettings(currentUserId!);
+        return _userSettings;
+      } catch (_) {
+        // Fall back to local
+      }
+    }
+
+    // Load from local storage
+    final prefs = await SharedPreferences.getInstance();
+    final settingsJson = prefs.getString('userSettings');
+    if (settingsJson != null) {
+      _userSettings = UserSettings.fromJson(json.decode(settingsJson));
+    }
+    return _userSettings;
+  }
+
+  /// Save user settings
+  Future<void> saveSettings(UserSettings settings) async {
+    _userSettings = settings;
+
+    // Save locally
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userSettings', json.encode(settings.toJson()));
+
+    // Sync to Supabase if signed in
+    if (isSignedIn && currentUserId != null) {
+      try {
+        await _databaseService.saveUserSettings(
+          userId: currentUserId!,
+          settings: settings,
+        );
+      } catch (_) {
+        // Sync failed - saved locally
+      }
+    }
+
+    notifyListeners();
+  }
+
+  // ============================================
+  // SRS (SPACED REPETITION) METHODS
+  // ============================================
+
+  /// Load items due for review today
+  Future<void> loadDueReviews() async {
+    if (_selectedLanguage == null) return;
+
+    if (isSignedIn && currentUserId != null) {
+      try {
+        final results = await Future.wait([
+          _databaseService.loadDueVocabulary(
+            userId: currentUserId!,
+            languageCode: _selectedLanguage!.code,
+            limit: _userSettings.reviewWordsPerDay,
+          ),
+          _databaseService.loadDueSentences(
+            userId: currentUserId!,
+            languageCode: _selectedLanguage!.code,
+            limit: _userSettings.reviewWordsPerDay,
+          ),
+          _databaseService.getDueReviewCount(
+            userId: currentUserId!,
+            languageCode: _selectedLanguage!.code,
+          ),
+        ]);
+
+        _dueVocabulary = results[0] as List<VocabularyItem>;
+        _dueSentences = results[1] as List<SentenceItem>;
+        _dueReviewCount = results[2] as int;
+      } catch (_) {
+        // Load from local - filter mastered items by due date
+        _loadDueReviewsFromLocal();
+      }
+    } else {
+      _loadDueReviewsFromLocal();
+    }
+
+    notifyListeners();
+  }
+
+  /// Load due reviews from local storage
+  void _loadDueReviewsFromLocal() {
+    _dueVocabulary = _masteredVocabulary
+        .where((item) => item.isDueForReview)
+        .take(_userSettings.reviewWordsPerDay)
+        .toList();
+
+    _dueSentences = _masteredSentences
+        .where((item) => item.isDueForReview)
+        .take(_userSettings.reviewWordsPerDay)
+        .toList();
+
+    _dueReviewCount = _masteredVocabulary.where((item) => item.isDueForReview).length +
+        _masteredSentences.where((item) => item.isDueForReview).length;
+  }
+
+  /// Review a vocabulary item with difficulty rating
+  Future<void> reviewVocabulary(VocabularyItem item, ReviewDifficulty difficulty) async {
+    // Calculate new interval
+    final newInterval = difficulty.calculateNextInterval(
+      currentInterval: item.reviewInterval,
+      easeFactor: item.easeFactor,
+      settings: _userSettings,
+    );
+
+    // Calculate new ease factor
+    final newEaseFactor = difficulty.adjustEaseFactor(item.easeFactor);
+
+    // Calculate next review date
+    final nextReviewDate = DateTime.now().add(Duration(days: newInterval));
+
+    // Update the item
+    final updatedItem = item.withUpdatedSrs(
+      nextReviewDate: nextReviewDate,
+      reviewInterval: newInterval,
+      easeFactor: newEaseFactor,
+    );
+
+    // Update in mastered list
+    final index = _masteredVocabulary.indexWhere((e) => e.id == item.id);
+    if (index != -1) {
+      _masteredVocabulary[index] = updatedItem;
+    }
+
+    // Remove from due list
+    _dueVocabulary.removeWhere((e) => e.id == item.id);
+    _dueReviewCount = (_dueReviewCount - 1).clamp(0, 9999);
+
+    // Add XP for review
+    _userStats.addXp(5);
+    _userStats.updateStreak();
+
+    // Save
+    await _saveData();
+
+    // Sync SRS data to Supabase
+    if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
+      try {
+        await _databaseService.updateVocabularySrs(
+          userId: currentUserId!,
+          languageCode: _selectedLanguage!.code,
+          item: updatedItem,
+        );
+      } catch (_) {
+        // Sync failed
+      }
+    }
+
+    notifyListeners();
+  }
+
+  /// Review a sentence item with difficulty rating
+  Future<void> reviewSentence(SentenceItem item, ReviewDifficulty difficulty) async {
+    // Calculate new interval
+    final newInterval = difficulty.calculateNextInterval(
+      currentInterval: item.reviewInterval,
+      easeFactor: item.easeFactor,
+      settings: _userSettings,
+    );
+
+    // Calculate new ease factor
+    final newEaseFactor = difficulty.adjustEaseFactor(item.easeFactor);
+
+    // Calculate next review date
+    final nextReviewDate = DateTime.now().add(Duration(days: newInterval));
+
+    // Update the item
+    final updatedItem = item.withUpdatedSrs(
+      nextReviewDate: nextReviewDate,
+      reviewInterval: newInterval,
+      easeFactor: newEaseFactor,
+    );
+
+    // Update in mastered list
+    final index = _masteredSentences.indexWhere((e) => e.id == item.id);
+    if (index != -1) {
+      _masteredSentences[index] = updatedItem;
+    }
+
+    // Remove from due list
+    _dueSentences.removeWhere((e) => e.id == item.id);
+    _dueReviewCount = (_dueReviewCount - 1).clamp(0, 9999);
+
+    // Add XP for review
+    _userStats.addXp(5);
+    _userStats.updateStreak();
+
+    // Save
+    await _saveData();
+
+    // Sync SRS data to Supabase
+    if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
+      try {
+        await _databaseService.updateSentenceSrs(
+          userId: currentUserId!,
+          languageCode: _selectedLanguage!.code,
+          item: updatedItem,
+        );
+      } catch (_) {
+        // Sync failed
+      }
+    }
+
+    notifyListeners();
+  }
+
+  /// Master vocabulary with initial SRS scheduling
+  Future<void> masterVocabularyWithSrs(VocabularyItem item, ReviewDifficulty difficulty) async {
+    // Calculate initial interval based on difficulty
+    final initialInterval = difficulty.calculateNextInterval(
+      currentInterval: 1,
+      easeFactor: 2.5,
+      settings: _userSettings,
+    );
+
+    final nextReviewDate = DateTime.now().add(Duration(days: initialInterval));
+
+    // Create item with SRS data
+    final itemWithSrs = item.copyWith(
+      srsData: SrsData(
+        nextReviewDate: nextReviewDate,
+        reviewInterval: initialInterval,
+        timesReviewed: 1,
+        easeFactor: difficulty.adjustEaseFactor(2.5),
+      ),
+    );
+
+    if (!_masteredVocabulary.any((e) => e.id == item.id)) {
+      _masteredVocabulary.add(itemWithSrs);
+      _practiceVocabulary.removeWhere((e) => e.id == item.id);
+      _userStats.addXp(10);
+      _userStats.totalWordsLearned++;
+      _userStats.updateStreak();
+
+      await _saveData();
+
+      // Sync to Supabase
+      if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
+        try {
+          await _databaseService.saveMasteredVocabulary(
+            userId: currentUserId!,
+            languageCode: _selectedLanguage!.code,
+            item: itemWithSrs,
+          );
+        } catch (_) {
+          // Sync failed
+        }
+      }
+
+      notifyListeners();
+    }
+  }
+
+  /// Master sentence with initial SRS scheduling
+  Future<void> masterSentenceWithSrs(SentenceItem item, ReviewDifficulty difficulty) async {
+    // Calculate initial interval based on difficulty
+    final initialInterval = difficulty.calculateNextInterval(
+      currentInterval: 1,
+      easeFactor: 2.5,
+      settings: _userSettings,
+    );
+
+    final nextReviewDate = DateTime.now().add(Duration(days: initialInterval));
+
+    // Create item with SRS data
+    final itemWithSrs = item.copyWith(
+      srsData: SrsData(
+        nextReviewDate: nextReviewDate,
+        reviewInterval: initialInterval,
+        timesReviewed: 1,
+        easeFactor: difficulty.adjustEaseFactor(2.5),
+      ),
+    );
+
+    if (!_masteredSentences.any((e) => e.id == item.id)) {
+      _masteredSentences.add(itemWithSrs);
+      _practiceSentences.removeWhere((e) => e.id == item.id);
+      _userStats.addXp(10);
+      _userStats.totalSentencesLearned++;
+      _userStats.updateStreak();
+
+      await _saveData();
+
+      // Sync to Supabase
+      if (isSignedIn && currentUserId != null && _selectedLanguage != null) {
+        try {
+          await _databaseService.saveMasteredSentence(
+            userId: currentUserId!,
+            languageCode: _selectedLanguage!.code,
+            item: itemWithSrs,
+          );
+        } catch (_) {
+          // Sync failed
+        }
+      }
+
+      notifyListeners();
+    }
   }
 }

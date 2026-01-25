@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/study_provider.dart';
-import '../services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -325,19 +325,23 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Future<void> _handleSignOut(BuildContext context) async {
+    // Store navigator before any async operations
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     // Show confirmation dialog
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to sign out?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
@@ -347,37 +351,33 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true && context.mounted) {
-      try {
-        // Show loading
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
-            ),
+    if (confirmed != true || !context.mounted) return;
+
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
           ),
-        );
+        ),
+      );
 
-        // Sign out
-        await AuthService().signOut();
+      // Sign out from Supabase
+      await Supabase.instance.client.auth.signOut();
 
-        if (context.mounted) {
-          Navigator.of(context).pop(); // Close loading dialog
-          // Navigation will be handled by AuthGate in main.dart
-        }
-      } catch (e) {
-        if (context.mounted) {
-          Navigator.of(context).pop(); // Close loading dialog
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to sign out: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
+      // Navigate to WelcomeScreen and clear all previous routes
+      navigator.pushNamedAndRemoveUntil('/welcome', (route) => false);
+    } catch (e) {
+      navigator.pop(); // Close loading dialog
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('Failed to sign out: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }
