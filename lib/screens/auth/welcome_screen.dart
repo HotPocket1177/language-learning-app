@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'sign_in_screen.dart';
 import 'sign_up_screen.dart';
 import '../../services/auth_service.dart';
+import '../../services/kuma_service.dart';
+import '../../widgets/kuma_mascot.dart';
+import '../../widgets/speech_bubble.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -12,6 +15,12 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    KumaService().load();
+  }
 
   Future<void> _handleGuestMode() async {
     setState(() => _isLoading = true);
@@ -35,6 +44,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final kumaService = KumaService();
+    final welcomeMsg = kumaService.welcomeMessage;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5EBE0),
       body: SafeArea(
@@ -45,28 +57,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // App Logo/Icon
-                Container(
-                  width: 140,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF8b6f47).withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.school_rounded,
-                    size: 70,
-                    color: Color(0xFF8b6f47),
+                // Kuma mascot with welcome bubble
+                Center(
+                  child: KumaMascot(
+                    size: KumaMascotSize.large,
+                    initialMood: welcomeMsg.mood,
+                    bubbleText: welcomeMsg.text,
+                    bubbleTailDirection: BubbleTailDirection.bottom,
+                    autoDismissBubble: false,
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
 
                 // App Title
                 Text(

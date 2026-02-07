@@ -4,6 +4,10 @@ import '../providers/study_provider.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
 import '../models/user_settings.dart';
+import '../models/kuma_message.dart';
+import '../services/kuma_service.dart';
+import '../widgets/kuma_mascot.dart';
+import '../widgets/speech_bubble.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String itemType;
@@ -30,9 +34,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
   // Track which items are new (not yet mastered) vs review (already mastered)
   final Set<String> _newItemIds = {};
 
+  // Kuma state
+  final GlobalKey<KumaMascotState> _kumaKey = GlobalKey();
+  final KumaService _kumaService = KumaService();
+  String? _kumaBubbleText;
+  KumaMood _kumaMood = KumaMood.idle;
+
   @override
   void initState() {
     super.initState();
+    _kumaService.load();
     _loadItems();
   }
 
@@ -124,11 +135,34 @@ class _ReviewScreenState extends State<ReviewScreen> {
       }
     }
 
+    // Show Kuma reaction based on difficulty
+    if (_kumaService.showKuma) {
+      KumaMessage reaction;
+      if (difficulty == ReviewDifficulty.again) {
+        reaction = _kumaService.getWrongAnswerReaction();
+      } else {
+        reaction = _kumaService.getCorrectAnswerReaction();
+      }
+      setState(() {
+        _kumaBubbleText = reaction.text;
+        _kumaMood = reaction.mood;
+      });
+    }
+
     setState(() {
       _reviewedCount++;
       _showAnswer = false;
       _currentIndex++;
     });
+
+    // Show session complete reaction
+    if (_currentIndex >= _reviewItems.length && _kumaService.showKuma) {
+      final completeMsg = _kumaService.getSessionCompleteReaction();
+      setState(() {
+        _kumaBubbleText = completeMsg.text;
+        _kumaMood = completeMsg.mood;
+      });
+    }
   }
 
   String _getIntervalLabel(ReviewDifficulty difficulty) {
@@ -246,12 +280,24 @@ class _ReviewScreenState extends State<ReviewScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.celebration,
-              size: 100,
-              color: Colors.amber.shade400,
-            ),
-            const SizedBox(height: 24),
+            // Kuma celebrates session completion
+            if (_kumaService.showKuma)
+              KumaMascot(
+                size: KumaMascotSize.large,
+                initialMood: KumaMood.celebrate,
+                bubbleText: _kumaBubbleText ?? 'Great session!',
+                bubbleTailDirection: BubbleTailDirection.bottom,
+                autoDismissBubble: false,
+              ),
+            if (_kumaService.showKuma) const SizedBox(height: 16),
+            if (!_kumaService.showKuma) ...[
+              Icon(
+                Icons.celebration,
+                size: 100,
+                color: Colors.amber.shade400,
+              ),
+              const SizedBox(height: 24),
+            ],
             const Text(
               'Session Complete!',
               style: TextStyle(
@@ -320,160 +366,181 @@ class _ReviewScreenState extends State<ReviewScreen> {
       category = item.category;
     }
 
-    return Column(
+    return Stack(
       children: [
-        // Progress bar
-        LinearProgressIndicator(
-          value: _reviewItems.isEmpty ? 0 : _currentIndex / _reviewItems.length,
-          backgroundColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
-          valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
-        ),
+        Column(
+          children: [
+            // Progress bar
+            LinearProgressIndicator(
+              value: _reviewItems.isEmpty ? 0 : _currentIndex / _reviewItems.length,
+              backgroundColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+            ),
 
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Card type indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
                   children: [
-                    Icon(
-                      isVocabulary ? Icons.text_fields : Icons.format_quote,
-                      size: 16,
-                      color: const Color(0xFF8b6f47),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      isVocabulary ? 'Vocabulary' : 'Sentence',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF8b6f47),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        category,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF8b6f47),
+                    // Card type indicator
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isVocabulary ? Icons.text_fields : Icons.format_quote,
+                          size: 16,
+                          color: const Color(0xFF8b6f47),
                         ),
-                      ),
+                        const SizedBox(width: 6),
+                        Text(
+                          isVocabulary ? 'Vocabulary' : 'Sentence',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF8b6f47),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            category,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF8b6f47),
+                            ),
+                          ),
+                        ),
+                        if (isNew) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'NEW',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green.shade700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                    if (isNew) ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          'NEW',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green.shade700,
+
+                    const Spacer(),
+
+                    // Main card
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: InkWell(
+                        onTap: () => setState(() => _showAnswer = true),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(32),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Japanese text
+                              Text(
+                                japanese,
+                                style: TextStyle(
+                                  fontSize: isVocabulary ? 48 : 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF2d2d2d),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              // Romaji
+                              Text(
+                                romaji,
+                                style: TextStyle(
+                                  fontSize: isVocabulary ? 18 : 14,
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+
+                              if (_showAnswer) ...[
+                                const SizedBox(height: 24),
+                                const Divider(),
+                                const SizedBox(height: 24),
+
+                                // English translation
+                                Text(
+                                  english,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8b6f47),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ] else ...[
+                                const SizedBox(height: 32),
+                                Text(
+                                  'Tap to reveal answer',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[400],
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ),
-                    ],
+                    ),
+
+                    const Spacer(),
+
+                    // Difficulty buttons
+                    if (_showAnswer) _buildDifficultyButtons() else const SizedBox(height: 80),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
 
-                const Spacer(),
-
-                // Main card
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: InkWell(
-                    onTap: () => setState(() => _showAnswer = true),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Japanese text
-                          Text(
-                            japanese,
-                            style: TextStyle(
-                              fontSize: isVocabulary ? 48 : 28,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF2d2d2d),
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          // Romaji
-                          Text(
-                            romaji,
-                            style: TextStyle(
-                              fontSize: isVocabulary ? 18 : 14,
-                              color: Colors.grey[600],
-                              fontStyle: FontStyle.italic,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                          if (_showAnswer) ...[
-                            const SizedBox(height: 24),
-                            const Divider(),
-                            const SizedBox(height: 24),
-
-                            // English translation
-                            Text(
-                              english,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF8b6f47),
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ] else ...[
-                            const SizedBox(height: 32),
-                            Text(
-                              'Tap to reveal answer',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[400],
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const Spacer(),
-
-                // Difficulty buttons
-                if (_showAnswer) _buildDifficultyButtons() else const SizedBox(height: 80),
-              ],
+        // Kuma in bottom-left corner
+        if (_kumaService.showKuma)
+          Positioned(
+            bottom: 16,
+            left: 8,
+            child: KumaMascot(
+              key: _kumaKey,
+              size: KumaMascotSize.small,
+              initialMood: _kumaMood,
+              bubbleText: _kumaBubbleText,
+              bubbleTailDirection: BubbleTailDirection.left,
+              onBubbleDismissed: () {
+                setState(() => _kumaBubbleText = null);
+              },
             ),
           ),
-        ),
       ],
     );
   }

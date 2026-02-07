@@ -1,6 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
+import '../services/kuma_service.dart';
+import '../models/kuma_message.dart';
+import '../widgets/kuma_mascot.dart';
+import '../widgets/speech_bubble.dart';
 import 'vocabulary_screen.dart';
 import 'sentences_screen.dart';
 import 'kanji_screen.dart';
@@ -18,12 +23,120 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<KumaMascotState> _kumaKey = GlobalKey();
+  final KumaService _kumaService = KumaService();
+  Timer? _messageTimer;
+  String? _kumaBubbleText;
+  KumaMood _kumaMood = KumaMood.idle;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<StudyProvider>(context, listen: false).loadDueCounts();
+      _initKuma();
     });
+  }
+
+  Future<void> _initKuma() async {
+    await _kumaService.load();
+    if (!mounted) return;
+
+    // Show tutorial if first time
+    if (!_kumaService.tutorialCompleted && _kumaService.showKuma) {
+      _showTutorial();
+      return;
+    }
+
+    _startMessageTimer();
+  }
+
+  void _startMessageTimer() {
+    _messageTimer?.cancel();
+    final interval = _kumaService.messageInterval;
+    if (interval == Duration.zero || !_kumaService.showTips) return;
+
+    _messageTimer = Timer.periodic(interval, (_) {
+      if (!mounted) return;
+      final msg = _kumaService.getRandomMessage();
+      setState(() {
+        _kumaBubbleText = msg.text;
+        _kumaMood = msg.mood;
+      });
+    });
+  }
+
+  void _showTutorial() {
+    final messages = _kumaService.tutorialMessages;
+    int step = 0;
+
+    void showStep() {
+      if (!mounted || step >= messages.length) {
+        _kumaService.completeTutorial();
+        _startMessageTimer();
+        return;
+      }
+      setState(() {
+        _kumaBubbleText = messages[step].text;
+        _kumaMood = messages[step].mood;
+      });
+      step++;
+    }
+
+    // Show first step, subsequent steps shown when bubble is dismissed
+    showStep();
+
+    // Override onBubbleDismissed via a wrapper — we use the key instead
+    // We'll advance tutorial by tapping the bubble
+    _tutorialAdvance = showStep;
+  }
+
+  // Callback for advancing tutorial — set by _showTutorial
+  VoidCallback? _tutorialAdvance;
+
+  void _showTipsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Image.asset('assets/images/kuma.png', width: 32, height: 32, filterQuality: FilterQuality.none),
+            const SizedBox(width: 12),
+            const Text('Kuma\'s Tips', style: TextStyle(color: Color(0xFF8b6f47))),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: _kumaService.tips
+                .map((tip) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('• ', style: TextStyle(color: Color(0xFF8b6f47), fontWeight: FontWeight.bold)),
+                          Expanded(child: Text(tip)),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Thanks, Kuma!'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _messageTimer?.cancel();
+    super.dispose();
   }
 
   void _showStudyModeSheet({
@@ -104,213 +217,239 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Consumer<StudyProvider>(
-              builder: (context, innerProvider, child) {
-                final stats = innerProvider.userStats;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Welcome Card
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Welcome, ${stats.userName}!',
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Keep learning!',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Stats Row
-                    Row(
+          body: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Consumer<StudyProvider>(
+                  builder: (context, innerProvider, child) {
+                    final stats = innerProvider.userStats;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: _StatCard(
-                            icon: Icons.star,
-                            title: 'Level',
-                            value: '${stats.level}',
-                            color: const Color(0xFF8b6f47),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _StatCard(
-                            icon: Icons.local_fire_department,
-                            title: 'Streak',
-                            value: '${stats.currentStreak}',
-                            color: Colors.orange,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // XP Progress Card
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // Welcome Card
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
                               children: [
                                 Text(
-                                  'Experience',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        color: const Color(0xFF8b6f47),
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  'Welcome, ${stats.userName}!',
+                                  style: Theme.of(context).textTheme.headlineMedium,
                                 ),
+                                const SizedBox(height: 8),
                                 Text(
-                                  '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
+                                  'Keep learning!',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: LinearProgressIndicator(
-                                value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
-                                minHeight: 20,
-                                backgroundColor: Colors.grey[300],
-                                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Stats Row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.star,
+                                title: 'Level',
+                                value: '${stats.level}',
+                                color: const Color(0xFF8b6f47),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.local_fire_department,
+                                title: 'Streak',
+                                value: '${stats.currentStreak}',
+                                color: Colors.orange,
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                        const SizedBox(height: 16),
 
-                    // Study Sections
-                    Text(
-                      'Study',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: const Color(0xFF8b6f47),
-                            fontWeight: FontWeight.bold,
+                        // XP Progress Card
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Experience',
+                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                            color: const Color(0xFF8b6f47),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                    Text(
+                                      '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
+                                      style: Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: LinearProgressIndicator(
+                                    value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
+                                    minHeight: 20,
+                                    backgroundColor: Colors.grey[300],
+                                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    _StudyCard(
-                      icon: Icons.book,
-                      title: 'Vocabulary',
-                      newCount: innerProvider.availableVocabulary.length,
-                      dueCount: innerProvider.dueVocabularyCount,
-                      onTap: () => _showStudyModeSheet(
-                        title: 'Vocabulary',
-                        icon: Icons.book,
-                        newCount: innerProvider.availableVocabulary.length,
-                        dueCount: innerProvider.dueVocabularyCount,
-                        itemType: 'vocabulary',
-                        studyNewScreen: const VocabularyScreen(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    _StudyCard(
-                      icon: Icons.chat_bubble,
-                      title: 'Sentences',
-                      newCount: innerProvider.availableSentences.length,
-                      dueCount: innerProvider.dueSentencesCount,
-                      onTap: () => _showStudyModeSheet(
-                        title: 'Sentences',
-                        icon: Icons.chat_bubble,
-                        newCount: innerProvider.availableSentences.length,
-                        dueCount: innerProvider.dueSentencesCount,
-                        itemType: 'sentence',
-                        studyNewScreen: const SentencesScreen(),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    if (provider.hasSpecialContent)
-                      _StudyCard(
-                        icon: Icons.language,
-                        title: 'Kanji Lessons',
-                        newCount: innerProvider.availableKanji.length,
-                        dueCount: innerProvider.dueKanjiCount,
-                        onTap: () => _showStudyModeSheet(
-                          title: 'Kanji Lessons',
-                          icon: Icons.language,
-                          newCount: innerProvider.availableKanji.length,
-                          dueCount: innerProvider.dueKanjiCount,
-                          itemType: 'kanji',
-                          studyNewScreen: const KanjiScreen(),
                         ),
-                      ),
-                    if (provider.hasSpecialContent) const SizedBox(height: 12),
-                    const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                    // Progress Sections
-                    Text(
-                      'Your Progress',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: const Color(0xFF8b6f47),
-                            fontWeight: FontWeight.bold,
+                        // Study Sections
+                        Text(
+                          'Study',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: const Color(0xFF8b6f47),
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        _StudyCard(
+                          icon: Icons.book,
+                          title: 'Vocabulary',
+                          newCount: innerProvider.availableVocabulary.length,
+                          dueCount: innerProvider.dueVocabularyCount,
+                          onTap: () => _showStudyModeSheet(
+                            title: 'Vocabulary',
+                            icon: Icons.book,
+                            newCount: innerProvider.availableVocabulary.length,
+                            dueCount: innerProvider.dueVocabularyCount,
+                            itemType: 'vocabulary',
+                            studyNewScreen: const VocabularyScreen(),
                           ),
-                    ),
-                    const SizedBox(height: 12),
+                        ),
+                        const SizedBox(height: 12),
 
-                    _MenuButton(
-                      icon: Icons.grid_view,
-                      title: 'Mastered Gallery',
-                      subtitle:
-                          '${stats.totalWordsLearned + stats.totalSentencesLearned} items mastered',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MasteredGalleryScreen()),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                        _StudyCard(
+                          icon: Icons.chat_bubble,
+                          title: 'Sentences',
+                          newCount: innerProvider.availableSentences.length,
+                          dueCount: innerProvider.dueSentencesCount,
+                          onTap: () => _showStudyModeSheet(
+                            title: 'Sentences',
+                            icon: Icons.chat_bubble,
+                            newCount: innerProvider.availableSentences.length,
+                            dueCount: innerProvider.dueSentencesCount,
+                            itemType: 'sentence',
+                            studyNewScreen: const SentencesScreen(),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
 
-                    _MenuButton(
-                      icon: Icons.fitness_center,
-                      title: 'Practice Deck',
-                      subtitle:
-                          '${innerProvider.practiceVocabulary.length + innerProvider.practiceSentences.length} items to practice',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const PracticeDeckScreen()),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                        if (provider.hasSpecialContent)
+                          _StudyCard(
+                            icon: Icons.language,
+                            title: 'Kanji Lessons',
+                            newCount: innerProvider.availableKanji.length,
+                            dueCount: innerProvider.dueKanjiCount,
+                            onTap: () => _showStudyModeSheet(
+                              title: 'Kanji Lessons',
+                              icon: Icons.language,
+                              newCount: innerProvider.availableKanji.length,
+                              dueCount: innerProvider.dueKanjiCount,
+                              itemType: 'kanji',
+                              studyNewScreen: const KanjiScreen(),
+                            ),
+                          ),
+                        if (provider.hasSpecialContent) const SizedBox(height: 12),
+                        const SizedBox(height: 24),
 
-                    _MenuButton(
-                      icon: Icons.person,
-                      title: 'Profile',
-                      subtitle: 'View your achievements',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                );
-              },
-            ),
+                        // Progress Sections
+                        Text(
+                          'Your Progress',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: const Color(0xFF8b6f47),
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        _MenuButton(
+                          icon: Icons.grid_view,
+                          title: 'Mastered Gallery',
+                          subtitle:
+                              '${stats.totalWordsLearned + stats.totalSentencesLearned} items mastered',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MasteredGalleryScreen()),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        _MenuButton(
+                          icon: Icons.fitness_center,
+                          title: 'Practice Deck',
+                          subtitle:
+                              '${innerProvider.practiceVocabulary.length + innerProvider.practiceSentences.length} items to practice',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PracticeDeckScreen()),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        _MenuButton(
+                          icon: Icons.person,
+                          title: 'Profile',
+                          subtitle: 'View your achievements',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    );
+                  },
+                ),
+              ),
+
+              // Kuma in top-right corner
+              if (_kumaService.showKuma)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: KumaMascot(
+                    key: _kumaKey,
+                    size: KumaMascotSize.small,
+                    initialMood: _kumaMood,
+                    bubbleText: _kumaBubbleText,
+                    bubbleTailDirection: BubbleTailDirection.right,
+                    onTap: _showTipsDialog,
+                    onBubbleDismissed: () {
+                      // Advance tutorial if running
+                      if (_tutorialAdvance != null) {
+                        _tutorialAdvance!();
+                      }
+                      setState(() => _kumaBubbleText = null);
+                    },
+                  ),
+                ),
+            ],
           ),
         );
       },

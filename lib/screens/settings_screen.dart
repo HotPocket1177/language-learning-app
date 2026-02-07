@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/user_settings.dart';
+import '../services/kuma_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +16,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoading = true;
   bool _hasChanges = false;
 
+  // Kuma settings
+  final KumaService _kumaService = KumaService();
+  bool _showKuma = true;
+  bool _showTips = true;
+  int _messageFrequency = 1;
+
   @override
   void initState() {
     super.initState();
@@ -24,8 +31,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     final provider = Provider.of<StudyProvider>(context, listen: false);
     final settings = await provider.loadSettings();
+    await _kumaService.load();
     setState(() {
       _settings = settings;
+      _showKuma = _kumaService.showKuma;
+      _showTips = _kumaService.showTips;
+      _messageFrequency = _kumaService.messageFrequency;
       _isLoading = false;
     });
   }
@@ -184,6 +195,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _updateSettings(
                         _settings.copyWith(maxInterval: value.round()),
                       );
+                    },
+                  ),
+                ]),
+                const SizedBox(height: 24),
+                _buildSectionHeader('Mascot'),
+                _buildCard([
+                  _buildSwitchTile(
+                    title: 'Show Kuma',
+                    subtitle: 'Display the mascot bear',
+                    value: _showKuma,
+                    onChanged: (value) {
+                      setState(() => _showKuma = value);
+                      _kumaService.setShowKuma(value);
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSwitchTile(
+                    title: 'Show tips',
+                    subtitle: 'Kuma shows helpful messages',
+                    value: _showTips,
+                    onChanged: (value) {
+                      setState(() => _showTips = value);
+                      _kumaService.setShowTips(value);
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _buildSliderTile(
+                    title: 'Message frequency',
+                    subtitle: _messageFrequency == 0
+                        ? 'Never'
+                        : _messageFrequency == 1
+                            ? 'Rarely'
+                            : 'Often',
+                    value: _messageFrequency.toDouble(),
+                    min: 0,
+                    max: 2,
+                    divisions: 2,
+                    onChanged: (value) {
+                      final v = value.round();
+                      setState(() => _messageFrequency = v);
+                      _kumaService.setMessageFrequency(v);
                     },
                   ),
                 ]),
