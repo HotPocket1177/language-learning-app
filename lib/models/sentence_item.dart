@@ -26,6 +26,7 @@ class SentenceItem {
   int get reviewInterval => srsData.reviewInterval;
   int get timesReviewed => srsData.timesReviewed;
   double get easeFactor => srsData.easeFactor;
+  DateTime? get lastReviewedAt => srsData.lastReviewedAt;
   bool get isDueForReview => srsData.isDueForReview;
 
   Map<String, dynamic> toJson() {

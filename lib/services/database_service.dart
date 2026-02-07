@@ -25,7 +25,7 @@ class DatabaseService {
           'user_id': userId,
           'level': stats.level,
           'xp': stats.xp,
-          'total_xp': stats.xp, // Can track total XP separately if needed
+          'total_xp': stats.xp,
           'current_streak': stats.currentStreak,
           'longest_streak': stats.longestStreak,
           'last_study_date': stats.lastStudyDate?.toIso8601String(),
@@ -82,6 +82,11 @@ class DatabaseService {
           'english_text': item.english,
           'category': item.category,
           'user_note': item.userNote,
+          'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
+          'review_interval': item.reviewInterval,
+          'times_reviewed': item.timesReviewed,
+          'ease_factor': item.easeFactor,
+          'last_reviewed_at': item.lastReviewedAt?.toIso8601String(),
         },
         onConflict: 'user_id,item_id,language_code',
       );
@@ -110,6 +115,11 @@ class DatabaseService {
           'english_text': item.english,
           'category': item.category,
           'user_note': item.userNote,
+          'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
+          'review_interval': item.reviewInterval,
+          'times_reviewed': item.timesReviewed,
+          'ease_factor': item.easeFactor,
+          'last_reviewed_at': item.lastReviewedAt?.toIso8601String(),
         },
         onConflict: 'user_id,item_id,language_code',
       );
@@ -169,6 +179,17 @@ class DatabaseService {
           english: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
+          srsData: SrsData(
+            nextReviewDate: item['next_review_date'] != null
+                ? DateTime.parse(item['next_review_date'])
+                : null,
+            reviewInterval: item['review_interval'] ?? 1,
+            timesReviewed: item['times_reviewed'] ?? 0,
+            easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+            lastReviewedAt: item['last_reviewed_at'] != null
+                ? DateTime.parse(item['last_reviewed_at'])
+                : null,
+          ),
         );
       }).toList();
     } on PostgrestException catch (e) {
@@ -199,6 +220,17 @@ class DatabaseService {
           english: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
+          srsData: SrsData(
+            nextReviewDate: item['next_review_date'] != null
+                ? DateTime.parse(item['next_review_date'])
+                : null,
+            reviewInterval: item['review_interval'] ?? 1,
+            timesReviewed: item['times_reviewed'] ?? 0,
+            easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+            lastReviewedAt: item['last_reviewed_at'] != null
+                ? DateTime.parse(item['last_reviewed_at'])
+                : null,
+          ),
         );
       }).toList();
     } on PostgrestException catch (e) {
@@ -517,6 +549,7 @@ class DatabaseService {
         'review_interval': item.reviewInterval,
         'times_reviewed': item.timesReviewed,
         'ease_factor': item.easeFactor,
+        'last_reviewed_at': DateTime.now().toIso8601String(),
         'user_note': item.userNote,
       }).eq('user_id', userId).eq('item_id', item.id).eq('language_code', languageCode);
     } on PostgrestException catch (e) {
@@ -538,6 +571,7 @@ class DatabaseService {
         'review_interval': item.reviewInterval,
         'times_reviewed': item.timesReviewed,
         'ease_factor': item.easeFactor,
+        'last_reviewed_at': DateTime.now().toIso8601String(),
         'user_note': item.userNote,
       }).eq('user_id', userId).eq('item_id', item.id).eq('language_code', languageCode);
     } on PostgrestException catch (e) {
@@ -585,6 +619,9 @@ class DatabaseService {
             reviewInterval: item['review_interval'] ?? 1,
             timesReviewed: item['times_reviewed'] ?? 0,
             easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+            lastReviewedAt: item['last_reviewed_at'] != null
+                ? DateTime.parse(item['last_reviewed_at'])
+                : null,
           ),
         );
       }).toList();
@@ -633,6 +670,9 @@ class DatabaseService {
             reviewInterval: item['review_interval'] ?? 1,
             timesReviewed: item['times_reviewed'] ?? 0,
             easeFactor: (item['ease_factor'] ?? 2.5).toDouble(),
+            lastReviewedAt: item['last_reviewed_at'] != null
+                ? DateTime.parse(item['last_reviewed_at'])
+                : null,
           ),
         );
       }).toList();
@@ -643,7 +683,7 @@ class DatabaseService {
     }
   }
 
-  /// Get count of items due for review
+  /// Get count of items due for review (total across all types)
   Future<int> getDueReviewCount({
     required String userId,
     required String languageCode,
@@ -662,6 +702,52 @@ class DatabaseService {
       return 0;
     } catch (_) {
       return 0;
+    }
+  }
+
+  /// Get count of due items by type
+  Future<int> getDueCountByType({
+    required String userId,
+    required String languageCode,
+    required String itemType,
+  }) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final response = await _supabase
+          .from('mastered_items')
+          .select('item_id')
+          .eq('user_id', userId)
+          .eq('language_code', languageCode)
+          .eq('item_type', itemType)
+          .or('next_review_date.is.null,next_review_date.lte.$today');
+
+      return (response as List).length;
+    } on PostgrestException {
+      return 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
+  /// Get review stats per type: returns {newCount, dueCount}
+  Future<Map<String, int>> getReviewStats({
+    required String userId,
+    required String languageCode,
+    required String itemType,
+    required int totalAvailable,
+  }) async {
+    try {
+      final dueCount = await getDueCountByType(
+        userId: userId,
+        languageCode: languageCode,
+        itemType: itemType,
+      );
+      return {
+        'newCount': totalAvailable,
+        'dueCount': dueCount,
+      };
+    } catch (_) {
+      return {'newCount': totalAvailable, 'dueCount': 0};
     }
   }
 }

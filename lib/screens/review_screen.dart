@@ -6,7 +6,16 @@ import '../models/sentence_item.dart';
 import '../models/user_settings.dart';
 
 class ReviewScreen extends StatefulWidget {
-  const ReviewScreen({super.key});
+  final String itemType;
+  final StudyMode mode;
+  final String title;
+
+  const ReviewScreen({
+    super.key,
+    required this.itemType,
+    required this.mode,
+    required this.title,
+  });
 
   @override
   State<ReviewScreen> createState() => _ReviewScreenState();
@@ -18,25 +27,80 @@ class _ReviewScreenState extends State<ReviewScreen> {
   int _currentIndex = 0;
   List<dynamic> _reviewItems = [];
   int _reviewedCount = 0;
+  // Track which items are new (not yet mastered) vs review (already mastered)
+  final Set<String> _newItemIds = {};
 
   @override
   void initState() {
     super.initState();
-    _loadReviewItems();
+    _loadItems();
   }
 
-  Future<void> _loadReviewItems() async {
+  Future<void> _loadItems() async {
     final provider = Provider.of<StudyProvider>(context, listen: false);
     await provider.loadDueReviews();
 
+    final List<dynamic> items = [];
+
+    switch (widget.mode) {
+      case StudyMode.reviewDue:
+        items.addAll(_getDueItems(provider));
+        break;
+      case StudyMode.studyNew:
+        final newItems = _getNewItems(provider);
+        for (final item in newItems) {
+          _newItemIds.add(_getItemId(item));
+        }
+        items.addAll(newItems);
+        break;
+      case StudyMode.practiceAll:
+        final newItems = _getNewItems(provider);
+        for (final item in newItems) {
+          _newItemIds.add(_getItemId(item));
+        }
+        items.addAll(newItems);
+        items.addAll(_getDueItems(provider));
+        items.shuffle();
+        break;
+    }
+
     setState(() {
-      // Combine vocabulary and sentences, shuffle them
-      _reviewItems = [
-        ...provider.dueVocabulary,
-        ...provider.dueSentences,
-      ]..shuffle();
+      _reviewItems = items;
       _isLoading = false;
     });
+  }
+
+  List<dynamic> _getNewItems(StudyProvider provider) {
+    final limit = provider.userSettings.newWordsPerDay;
+    switch (widget.itemType) {
+      case 'vocabulary':
+        return provider.availableVocabulary.take(limit).toList();
+      case 'sentence':
+        return provider.availableSentences.take(limit).toList();
+      default:
+        return [];
+    }
+  }
+
+  List<dynamic> _getDueItems(StudyProvider provider) {
+    switch (widget.itemType) {
+      case 'vocabulary':
+        return provider.dueVocabulary.toList();
+      case 'sentence':
+        return provider.dueSentences.toList();
+      default:
+        return [];
+    }
+  }
+
+  String _getItemId(dynamic item) {
+    if (item is VocabularyItem) return item.id;
+    if (item is SentenceItem) return item.id;
+    return '';
+  }
+
+  bool _isNewItem(dynamic item) {
+    return _newItemIds.contains(_getItemId(item));
   }
 
   void _handleDifficulty(ReviewDifficulty difficulty) async {
@@ -44,11 +108,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
     final provider = Provider.of<StudyProvider>(context, listen: false);
     final currentItem = _reviewItems[_currentIndex];
+    final isNew = _isNewItem(currentItem);
 
     if (currentItem is VocabularyItem) {
-      await provider.reviewVocabulary(currentItem, difficulty);
+      if (isNew) {
+        await provider.masterVocabularyWithSrs(currentItem, difficulty);
+      } else {
+        await provider.reviewVocabulary(currentItem, difficulty);
+      }
     } else if (currentItem is SentenceItem) {
-      await provider.reviewSentence(currentItem, difficulty);
+      if (isNew) {
+        await provider.masterSentenceWithSrs(currentItem, difficulty);
+      } else {
+        await provider.reviewSentence(currentItem, difficulty);
+      }
     }
 
     setState(() {
@@ -58,13 +131,42 @@ class _ReviewScreenState extends State<ReviewScreen> {
     });
   }
 
+  String _getIntervalLabel(ReviewDifficulty difficulty) {
+    if (_currentIndex >= _reviewItems.length) return '';
+    final provider = Provider.of<StudyProvider>(context, listen: false);
+    final currentItem = _reviewItems[_currentIndex];
+    final isNew = _isNewItem(currentItem);
+
+    final currentInterval = isNew
+        ? 1
+        : (currentItem is VocabularyItem
+            ? currentItem.reviewInterval
+            : (currentItem as SentenceItem).reviewInterval);
+    final easeFactor = isNew
+        ? 2.5
+        : (currentItem is VocabularyItem
+            ? currentItem.easeFactor
+            : (currentItem as SentenceItem).easeFactor);
+
+    final days = difficulty.calculateNextInterval(
+      currentInterval: currentInterval,
+      easeFactor: easeFactor,
+      settings: provider.userSettings,
+    );
+
+    if (days == 1) return '1 day';
+    if (days < 30) return '$days days';
+    if (days < 365) return '${(days / 30).round()} mo';
+    return '${(days / 365).round()} yr';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daily Review'),
+        title: Text(widget.title),
         actions: [
-          if (_reviewItems.isNotEmpty)
+          if (_reviewItems.isNotEmpty && _currentIndex < _reviewItems.length)
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 16),
@@ -116,7 +218,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'No reviews due today.\nKeep learning new words!',
+              widget.mode == StudyMode.reviewDue
+                  ? 'No reviews due right now.\nKeep learning new items!'
+                  : 'No items available.\nCheck back later!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -127,7 +231,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ElevatedButton.icon(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back),
-              label: const Text('Back to Home'),
+              label: const Text('Back'),
             ),
           ],
         ),
@@ -149,7 +253,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'Review Complete!',
+              'Session Complete!',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -158,7 +262,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'You reviewed $_reviewedCount items today.\nGreat job keeping up your streak!',
+              'You reviewed $_reviewedCount items.\nGreat job!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -196,6 +300,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget _buildReviewCard() {
     final currentItem = _reviewItems[_currentIndex];
     final isVocabulary = currentItem is VocabularyItem;
+    final isNew = _isNewItem(currentItem);
 
     final String japanese;
     final String romaji;
@@ -265,6 +370,27 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         ),
                       ),
                     ),
+                    if (isNew) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'NEW',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
 
@@ -365,13 +491,13 @@ class _ReviewScreenState extends State<ReviewScreen> {
         const SizedBox(height: 12),
         Row(
           children: [
-            // Hard button
+            // Again button
             Expanded(
               child: _DifficultyButton(
-                label: 'Hard',
-                subtitle: '1 day',
+                label: 'Again',
+                subtitle: _getIntervalLabel(ReviewDifficulty.again),
                 color: Colors.red.shade400,
-                onPressed: () => _handleDifficulty(ReviewDifficulty.hard),
+                onPressed: () => _handleDifficulty(ReviewDifficulty.again),
               ),
             ),
             const SizedBox(width: 12),
@@ -379,7 +505,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             Expanded(
               child: _DifficultyButton(
                 label: 'Good',
-                subtitle: '3 days',
+                subtitle: _getIntervalLabel(ReviewDifficulty.good),
                 color: Colors.orange.shade400,
                 onPressed: () => _handleDifficulty(ReviewDifficulty.good),
               ),
@@ -389,7 +515,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             Expanded(
               child: _DifficultyButton(
                 label: 'Easy',
-                subtitle: '7+ days',
+                subtitle: _getIntervalLabel(ReviewDifficulty.easy),
                 color: Colors.green.shade400,
                 onPressed: () => _handleDifficulty(ReviewDifficulty.easy),
               ),

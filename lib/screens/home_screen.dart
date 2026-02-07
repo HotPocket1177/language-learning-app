@@ -10,8 +10,43 @@ import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'review_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<StudyProvider>(context, listen: false).loadDueCounts();
+    });
+  }
+
+  void _showStudyModeSheet({
+    required String title,
+    required IconData icon,
+    required int newCount,
+    required int dueCount,
+    required String itemType,
+    required Widget studyNewScreen,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _StudyModeBottomSheet(
+        title: title,
+        icon: icon,
+        newCount: newCount,
+        dueCount: dueCount,
+        itemType: itemType,
+        studyNewScreen: studyNewScreen,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,15 +201,6 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-
-                    // Daily Review Card
-                    _DailyReviewCard(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ReviewScreen()),
-                      ),
-                    ),
                     const SizedBox(height: 24),
 
                     // Study Sections
@@ -187,42 +213,57 @@ class HomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    _MenuButton(
+                    _StudyCard(
                       icon: Icons.book,
                       title: 'Vocabulary',
-                      subtitle: '${innerProvider.availableVocabulary.length} words available',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const VocabularyScreen()),
+                      newCount: innerProvider.availableVocabulary.length,
+                      dueCount: innerProvider.dueVocabularyCount,
+                      onTap: () => _showStudyModeSheet(
+                        title: 'Vocabulary',
+                        icon: Icons.book,
+                        newCount: innerProvider.availableVocabulary.length,
+                        dueCount: innerProvider.dueVocabularyCount,
+                        itemType: 'vocabulary',
+                        studyNewScreen: const VocabularyScreen(),
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _MenuButton(
+                    _StudyCard(
                       icon: Icons.chat_bubble,
                       title: 'Sentences',
-                      subtitle: '${innerProvider.availableSentences.length} sentences available',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SentencesScreen()),
+                      newCount: innerProvider.availableSentences.length,
+                      dueCount: innerProvider.dueSentencesCount,
+                      onTap: () => _showStudyModeSheet(
+                        title: 'Sentences',
+                        icon: Icons.chat_bubble,
+                        newCount: innerProvider.availableSentences.length,
+                        dueCount: innerProvider.dueSentencesCount,
+                        itemType: 'sentence',
+                        studyNewScreen: const SentencesScreen(),
                       ),
                     ),
                     const SizedBox(height: 12),
 
                     if (provider.hasSpecialContent)
-                      _MenuButton(
+                      _StudyCard(
                         icon: Icons.language,
                         title: 'Kanji Lessons',
-                        subtitle: '${innerProvider.availableKanji.length} kanji available',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const KanjiScreen()),
+                        newCount: innerProvider.availableKanji.length,
+                        dueCount: innerProvider.dueKanjiCount,
+                        onTap: () => _showStudyModeSheet(
+                          title: 'Kanji Lessons',
+                          icon: Icons.language,
+                          newCount: innerProvider.availableKanji.length,
+                          dueCount: innerProvider.dueKanjiCount,
+                          itemType: 'kanji',
+                          studyNewScreen: const KanjiScreen(),
                         ),
                       ),
                     if (provider.hasSpecialContent) const SizedBox(height: 12),
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                    // Practice Sections
+                    // Progress Sections
                     Text(
                       'Your Progress',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -318,6 +359,114 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+/// Study card that shows "X new | Y due" for each section
+class _StudyCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final int newCount;
+  final int dueCount;
+  final VoidCallback onTap;
+
+  const _StudyCard({
+    required this.icon,
+    required this.title,
+    required this.newCount,
+    required this.dueCount,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: const Color(0xFF8b6f47), size: 28),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF8b6f47),
+                          ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        _CountBadge(
+                          count: newCount,
+                          label: 'new',
+                          color: const Color(0xFF8b6f47),
+                        ),
+                        const SizedBox(width: 8),
+                        _CountBadge(
+                          count: dueCount,
+                          label: 'due',
+                          color: dueCount > 0
+                              ? Colors.orange.shade700
+                              : Colors.grey.shade500,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Small badge showing count + label (e.g. "5 new")
+class _CountBadge extends StatelessWidget {
+  final int count;
+  final String label;
+  final Color color;
+
+  const _CountBadge({
+    required this.count,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        '$count $label',
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
 class _MenuButton extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -380,122 +529,202 @@ class _MenuButton extends StatelessWidget {
   }
 }
 
-class _DailyReviewCard extends StatefulWidget {
-  final VoidCallback onTap;
+/// Bottom sheet for selecting study mode
+class _StudyModeBottomSheet extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final int newCount;
+  final int dueCount;
+  final String itemType;
+  final Widget studyNewScreen;
 
-  const _DailyReviewCard({required this.onTap});
-
-  @override
-  State<_DailyReviewCard> createState() => _DailyReviewCardState();
-}
-
-class _DailyReviewCardState extends State<_DailyReviewCard> {
-  int _dueCount = 0;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDueCount();
-  }
-
-  Future<void> _loadDueCount() async {
-    final provider = Provider.of<StudyProvider>(context, listen: false);
-    await provider.loadDueReviews();
-    if (mounted) {
-      setState(() {
-        _dueCount = provider.dueReviewCount;
-        _isLoading = false;
-      });
-    }
-  }
+  const _StudyModeBottomSheet({
+    required this.title,
+    required this.icon,
+    required this.newCount,
+    required this.dueCount,
+    required this.itemType,
+    required this.studyNewScreen,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: _dueCount > 0 ? const Color(0xFF8b6f47) : Colors.white,
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Title
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: _dueCount > 0
-                      ? Colors.white.withValues(alpha: 0.2)
-                      : const Color(0xFF8b6f47).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.replay,
-                  color: _dueCount > 0 ? Colors.white : const Color(0xFF8b6f47),
-                  size: 32,
+              Icon(icon, color: const Color(0xFF8b6f47), size: 24),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF8b6f47),
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Daily Review',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: _dueCount > 0 ? Colors.white : const Color(0xFF8b6f47),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    _isLoading
-                        ? Text(
-                            'Loading...',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _dueCount > 0
-                                  ? Colors.white.withValues(alpha: 0.8)
-                                  : Colors.grey[600],
-                            ),
-                          )
-                        : Text(
-                            _dueCount > 0
-                                ? '$_dueCount items due for review'
-                                : 'All caught up!',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _dueCount > 0
-                                  ? Colors.white.withValues(alpha: 0.9)
-                                  : Colors.grey[600],
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-              if (_dueCount > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Start',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF8b6f47),
-                    ),
-                  ),
-                )
-              else
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green.shade400,
-                  size: 28,
-                ),
             ],
+          ),
+          const SizedBox(height: 24),
+
+          // Study New option
+          _ModeOption(
+            icon: Icons.add_circle_outline,
+            title: 'Study New',
+            subtitle: '$newCount items available',
+            color: const Color(0xFF8b6f47),
+            enabled: newCount > 0,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => studyNewScreen),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // Review Due option
+          _ModeOption(
+            icon: Icons.replay,
+            title: 'Review Due',
+            subtitle: '$dueCount items due for review',
+            color: Colors.orange.shade700,
+            enabled: dueCount > 0,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ReviewScreen(
+                    itemType: itemType,
+                    mode: StudyMode.reviewDue,
+                    title: '$title Review',
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+
+          // Practice All option
+          _ModeOption(
+            icon: Icons.shuffle,
+            title: 'Practice All',
+            subtitle: 'Mix of new and review items',
+            color: Colors.green.shade700,
+            enabled: newCount > 0 || dueCount > 0,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ReviewScreen(
+                    itemType: itemType,
+                    mode: StudyMode.practiceAll,
+                    title: '$title Practice',
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Single mode option in the bottom sheet
+class _ModeOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  const _ModeOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.4,
+      child: Material(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: enabled ? color : Colors.grey,
+                ),
+              ],
+            ),
           ),
         ),
       ),

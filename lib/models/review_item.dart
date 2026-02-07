@@ -4,6 +4,7 @@ mixin SrsFields {
   int get reviewInterval;
   int get timesReviewed;
   double get easeFactor;
+  DateTime? get lastReviewedAt;
 }
 
 /// SRS data that can be attached to any study item
@@ -12,12 +13,14 @@ class SrsData {
   final int reviewInterval;
   final int timesReviewed;
   final double easeFactor;
+  final DateTime? lastReviewedAt;
 
   const SrsData({
     this.nextReviewDate,
     this.reviewInterval = 1,
     this.timesReviewed = 0,
     this.easeFactor = 2.5,
+    this.lastReviewedAt,
   });
 
   factory SrsData.fromJson(Map<String, dynamic> json) {
@@ -28,6 +31,9 @@ class SrsData {
       reviewInterval: json['review_interval'] ?? 1,
       timesReviewed: json['times_reviewed'] ?? 0,
       easeFactor: (json['ease_factor'] ?? 2.5).toDouble(),
+      lastReviewedAt: json['last_reviewed_at'] != null
+          ? DateTime.parse(json['last_reviewed_at'])
+          : null,
     );
   }
 
@@ -37,6 +43,7 @@ class SrsData {
       'review_interval': reviewInterval,
       'times_reviewed': timesReviewed,
       'ease_factor': easeFactor,
+      'last_reviewed_at': lastReviewedAt?.toIso8601String(),
     };
   }
 
@@ -45,12 +52,14 @@ class SrsData {
     int? reviewInterval,
     int? timesReviewed,
     double? easeFactor,
+    DateTime? lastReviewedAt,
   }) {
     return SrsData(
       nextReviewDate: nextReviewDate ?? this.nextReviewDate,
       reviewInterval: reviewInterval ?? this.reviewInterval,
       timesReviewed: timesReviewed ?? this.timesReviewed,
       easeFactor: easeFactor ?? this.easeFactor,
+      lastReviewedAt: lastReviewedAt ?? this.lastReviewedAt,
     );
   }
 

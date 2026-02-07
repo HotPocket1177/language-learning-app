@@ -125,10 +125,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ]),
                 const SizedBox(height: 24),
-                _buildSectionHeader('Review Algorithm'),
+                _buildSectionHeader('Interval Multipliers'),
                 _buildCard([
                   _buildSliderTile(
-                    title: 'Easy interval multiplier',
+                    title: 'Easy multiplier',
                     subtitle: '${_settings.easyMultiplier.toStringAsFixed(1)}x',
                     value: _settings.easyMultiplier,
                     min: 1.5,
@@ -144,16 +144,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(height: 1),
                   _buildSliderTile(
-                    title: 'Hard interval multiplier',
-                    subtitle: '${_settings.hardMultiplier.toStringAsFixed(1)}x',
-                    value: _settings.hardMultiplier,
-                    min: 0.5,
-                    max: 2.0,
-                    divisions: 15,
+                    title: 'Good multiplier',
+                    subtitle: '${_settings.goodMultiplier.toStringAsFixed(1)}x',
+                    value: _settings.goodMultiplier,
+                    min: 1.0,
+                    max: 3.0,
+                    divisions: 20,
                     onChanged: (value) {
                       _updateSettings(
                         _settings.copyWith(
-                          hardMultiplier: double.parse(value.toStringAsFixed(1)),
+                          goodMultiplier: double.parse(value.toStringAsFixed(1)),
                         ),
                       );
                     },

@@ -12,6 +12,13 @@ import '../data/language_data.dart';
 import '../services/auth_service.dart';
 import '../services/database_service.dart';
 
+/// Study modes for per-section review
+enum StudyMode {
+  studyNew,
+  reviewDue,
+  practiceAll,
+}
+
 class StudyProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   final DatabaseService _databaseService = DatabaseService();
@@ -30,6 +37,11 @@ class StudyProvider with ChangeNotifier {
   List<SentenceItem> _dueSentences = [];
   int _dueReviewCount = 0;
 
+  // Per-type due counts
+  int _dueVocabularyCount = 0;
+  int _dueSentencesCount = 0;
+  int _dueKanjiCount = 0;
+
   // Getters
   SupportedLanguage? get selectedLanguage => _selectedLanguage;
   UserStats get userStats => _userStats;
@@ -44,6 +56,11 @@ class StudyProvider with ChangeNotifier {
   List<VocabularyItem> get dueVocabulary => _dueVocabulary;
   List<SentenceItem> get dueSentences => _dueSentences;
   int get dueReviewCount => _dueReviewCount;
+
+  // Per-type due count getters
+  int get dueVocabularyCount => _dueVocabularyCount;
+  int get dueSentencesCount => _dueSentencesCount;
+  int get dueKanjiCount => _dueKanjiCount;
 
   // Auth getters
   bool get isSignedIn => _authService.isSignedIn;
@@ -190,6 +207,9 @@ class StudyProvider with ChangeNotifier {
         _practiceVocabulary = results[3] as List<VocabularyItem>;
         _practiceSentences = results[4] as List<SentenceItem>;
 
+        // Update per-type due counts from local data
+        _updateDueCountsFromLocal();
+
         // Cache to local storage
         await _saveToLocal();
       }
@@ -251,6 +271,9 @@ class StudyProvider with ChangeNotifier {
         final List<dynamic> decoded = json.decode(practiceSentJson);
         _practiceSentences = decoded.map((e) => SentenceItem.fromJson(e)).toList();
       }
+
+      // Update per-type due counts
+      _updateDueCountsFromLocal();
     }
 
     notifyListeners();
@@ -323,6 +346,7 @@ class StudyProvider with ChangeNotifier {
         }
       }
 
+      _updateDueCountsFromLocal();
       notifyListeners();
     }
   }
@@ -351,6 +375,7 @@ class StudyProvider with ChangeNotifier {
         }
       }
 
+      _updateDueCountsFromLocal();
       notifyListeners();
     }
   }
@@ -420,6 +445,7 @@ class StudyProvider with ChangeNotifier {
   Future<void> removeMasteredVocabulary(String id) async {
     _masteredVocabulary.removeWhere((e) => e.id == id);
     await _saveData();
+    _updateDueCountsFromLocal();
     notifyListeners();
   }
 
@@ -427,6 +453,7 @@ class StudyProvider with ChangeNotifier {
   Future<void> removeMasteredSentence(String id) async {
     _masteredSentences.removeWhere((e) => e.id == id);
     await _saveData();
+    _updateDueCountsFromLocal();
     notifyListeners();
   }
 
@@ -531,6 +558,61 @@ class StudyProvider with ChangeNotifier {
   // SRS (SPACED REPETITION) METHODS
   // ============================================
 
+  /// Update per-type due counts from local data
+  void _updateDueCountsFromLocal() {
+    _dueVocabularyCount = _masteredVocabulary
+        .where((item) => item.isDueForReview)
+        .length;
+
+    _dueSentencesCount = _masteredSentences
+        .where((item) => item.isDueForReview)
+        .length;
+
+    // Kanji don't have SRS data in local model yet
+    _dueKanjiCount = 0;
+
+    _dueReviewCount = _dueVocabularyCount + _dueSentencesCount + _dueKanjiCount;
+  }
+
+  /// Load per-type due counts (for home screen display)
+  Future<void> loadDueCounts() async {
+    if (_selectedLanguage == null) return;
+
+    if (isSignedIn && currentUserId != null) {
+      try {
+        final langCode = _selectedLanguage!.code;
+        final results = await Future.wait([
+          _databaseService.getDueCountByType(
+            userId: currentUserId!,
+            languageCode: langCode,
+            itemType: 'vocabulary',
+          ),
+          _databaseService.getDueCountByType(
+            userId: currentUserId!,
+            languageCode: langCode,
+            itemType: 'sentence',
+          ),
+          _databaseService.getDueCountByType(
+            userId: currentUserId!,
+            languageCode: langCode,
+            itemType: 'kanji',
+          ),
+        ]);
+
+        _dueVocabularyCount = results[0];
+        _dueSentencesCount = results[1];
+        _dueKanjiCount = results[2];
+        _dueReviewCount = _dueVocabularyCount + _dueSentencesCount + _dueKanjiCount;
+      } catch (_) {
+        _updateDueCountsFromLocal();
+      }
+    } else {
+      _updateDueCountsFromLocal();
+    }
+
+    notifyListeners();
+  }
+
   /// Load items due for review today
   Future<void> loadDueReviews() async {
     if (_selectedLanguage == null) return;
@@ -558,7 +640,6 @@ class StudyProvider with ChangeNotifier {
         _dueSentences = results[1] as List<SentenceItem>;
         _dueReviewCount = results[2] as int;
       } catch (_) {
-        // Load from local - filter mastered items by due date
         _loadDueReviewsFromLocal();
       }
     } else {
@@ -636,6 +717,7 @@ class StudyProvider with ChangeNotifier {
       }
     }
 
+    _updateDueCountsFromLocal();
     notifyListeners();
   }
 
@@ -691,6 +773,7 @@ class StudyProvider with ChangeNotifier {
       }
     }
 
+    _updateDueCountsFromLocal();
     notifyListeners();
   }
 
@@ -712,6 +795,7 @@ class StudyProvider with ChangeNotifier {
         reviewInterval: initialInterval,
         timesReviewed: 1,
         easeFactor: difficulty.adjustEaseFactor(2.5),
+        lastReviewedAt: DateTime.now(),
       ),
     );
 
@@ -737,6 +821,7 @@ class StudyProvider with ChangeNotifier {
         }
       }
 
+      _updateDueCountsFromLocal();
       notifyListeners();
     }
   }
@@ -759,6 +844,7 @@ class StudyProvider with ChangeNotifier {
         reviewInterval: initialInterval,
         timesReviewed: 1,
         easeFactor: difficulty.adjustEaseFactor(2.5),
+        lastReviewedAt: DateTime.now(),
       ),
     );
 
@@ -784,6 +870,7 @@ class StudyProvider with ChangeNotifier {
         }
       }
 
+      _updateDueCountsFromLocal();
       notifyListeners();
     }
   }

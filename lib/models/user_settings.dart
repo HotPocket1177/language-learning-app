@@ -4,7 +4,7 @@ class UserSettings {
   final int reviewWordsPerDay;
   final bool autoAddToPractice;
   final double easyMultiplier;
-  final double hardMultiplier;
+  final double goodMultiplier;
   final int minInterval;
   final int maxInterval;
   final bool dailyReminderEnabled;
@@ -12,10 +12,10 @@ class UserSettings {
 
   const UserSettings({
     this.newWordsPerDay = 10,
-    this.reviewWordsPerDay = 20,
+    this.reviewWordsPerDay = 50,
     this.autoAddToPractice = true,
     this.easyMultiplier = 2.5,
-    this.hardMultiplier = 1.2,
+    this.goodMultiplier = 1.5,
     this.minInterval = 1,
     this.maxInterval = 365,
     this.dailyReminderEnabled = false,
@@ -25,10 +25,10 @@ class UserSettings {
   factory UserSettings.fromJson(Map<String, dynamic> json) {
     return UserSettings(
       newWordsPerDay: json['new_words_per_day'] ?? 10,
-      reviewWordsPerDay: json['review_words_per_day'] ?? 20,
+      reviewWordsPerDay: json['review_words_per_day'] ?? 50,
       autoAddToPractice: json['auto_add_to_practice'] ?? true,
       easyMultiplier: (json['easy_multiplier'] ?? 2.5).toDouble(),
-      hardMultiplier: (json['hard_multiplier'] ?? 1.2).toDouble(),
+      goodMultiplier: (json['good_multiplier'] ?? 1.5).toDouble(),
       minInterval: json['min_interval'] ?? 1,
       maxInterval: json['max_interval'] ?? 365,
       dailyReminderEnabled: json['daily_reminder_enabled'] ?? false,
@@ -42,7 +42,7 @@ class UserSettings {
       'review_words_per_day': reviewWordsPerDay,
       'auto_add_to_practice': autoAddToPractice,
       'easy_multiplier': easyMultiplier,
-      'hard_multiplier': hardMultiplier,
+      'good_multiplier': goodMultiplier,
       'min_interval': minInterval,
       'max_interval': maxInterval,
       'daily_reminder_enabled': dailyReminderEnabled,
@@ -55,7 +55,7 @@ class UserSettings {
     int? reviewWordsPerDay,
     bool? autoAddToPractice,
     double? easyMultiplier,
-    double? hardMultiplier,
+    double? goodMultiplier,
     int? minInterval,
     int? maxInterval,
     bool? dailyReminderEnabled,
@@ -66,7 +66,7 @@ class UserSettings {
       reviewWordsPerDay: reviewWordsPerDay ?? this.reviewWordsPerDay,
       autoAddToPractice: autoAddToPractice ?? this.autoAddToPractice,
       easyMultiplier: easyMultiplier ?? this.easyMultiplier,
-      hardMultiplier: hardMultiplier ?? this.hardMultiplier,
+      goodMultiplier: goodMultiplier ?? this.goodMultiplier,
       minInterval: minInterval ?? this.minInterval,
       maxInterval: maxInterval ?? this.maxInterval,
       dailyReminderEnabled: dailyReminderEnabled ?? this.dailyReminderEnabled,
@@ -77,7 +77,7 @@ class UserSettings {
 
 /// Review difficulty levels for SRS algorithm
 enum ReviewDifficulty {
-  hard,
+  again,
   good,
   easy,
 }
@@ -90,44 +90,44 @@ extension ReviewDifficultyExtension on ReviewDifficulty {
     required double easeFactor,
     required UserSettings settings,
   }) {
-    double multiplier;
+    int nextInterval;
     switch (this) {
-      case ReviewDifficulty.hard:
-        multiplier = settings.hardMultiplier;
+      case ReviewDifficulty.again:
+        // Reset to minimum interval (1 day by default)
+        nextInterval = settings.minInterval;
         break;
       case ReviewDifficulty.good:
-        multiplier = easeFactor;
+        nextInterval = (currentInterval * settings.goodMultiplier).round();
         break;
       case ReviewDifficulty.easy:
-        multiplier = settings.easyMultiplier;
+        nextInterval = (currentInterval * settings.easyMultiplier).round();
         break;
     }
 
-    int nextInterval = (currentInterval * multiplier).round();
-
-    // Clamp to min/max
-    if (nextInterval < settings.minInterval) {
-      nextInterval = settings.minInterval;
-    }
-    if (nextInterval > settings.maxInterval) {
-      nextInterval = settings.maxInterval;
-    }
-
-    return nextInterval;
+    return nextInterval.clamp(settings.minInterval, settings.maxInterval);
   }
 
   /// Adjust ease factor based on difficulty
   double adjustEaseFactor(double currentFactor) {
     switch (this) {
-      case ReviewDifficulty.hard:
-        // Decrease ease factor (harder = more frequent reviews)
+      case ReviewDifficulty.again:
         return (currentFactor - 0.2).clamp(1.3, 3.0);
       case ReviewDifficulty.good:
-        // Keep same
         return currentFactor;
       case ReviewDifficulty.easy:
-        // Increase ease factor
         return (currentFactor + 0.15).clamp(1.3, 3.0);
+    }
+  }
+
+  /// Display label for the button
+  String get label {
+    switch (this) {
+      case ReviewDifficulty.again:
+        return 'Again';
+      case ReviewDifficulty.good:
+        return 'Good';
+      case ReviewDifficulty.easy:
+        return 'Easy';
     }
   }
 }
