@@ -5,7 +5,7 @@ import '../providers/study_provider.dart';
 import '../services/kuma_service.dart';
 import '../models/kuma_message.dart';
 import '../widgets/kuma_mascot.dart';
-import '../widgets/speech_bubble.dart';
+import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
 import 'vocabulary_screen.dart';
 import 'sentences_screen.dart';
 import 'kanji_screen.dart';
@@ -27,7 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final KumaService _kumaService = KumaService();
   Timer? _messageTimer;
   String? _kumaBubbleText;
-  KumaMood _kumaMood = KumaMood.idle;
+  KumaEmotion _kumaEmotion = KumaEmotion.idle;
+  bool _showKumaBubble = false;
 
   @override
   void initState() {
@@ -61,7 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final msg = _kumaService.getRandomMessage();
       setState(() {
         _kumaBubbleText = msg.text;
-        _kumaMood = msg.mood;
+        _kumaEmotion = msg.emotion;
+        _showKumaBubble = true;
       });
     });
   }
@@ -78,59 +80,28 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       setState(() {
         _kumaBubbleText = messages[step].text;
-        _kumaMood = messages[step].mood;
+        _kumaEmotion = messages[step].emotion;
+        _showKumaBubble = true;
       });
       step++;
     }
 
     // Show first step, subsequent steps shown when bubble is dismissed
     showStep();
-
-    // Override onBubbleDismissed via a wrapper — we use the key instead
-    // We'll advance tutorial by tapping the bubble
     _tutorialAdvance = showStep;
   }
 
   // Callback for advancing tutorial — set by _showTutorial
   VoidCallback? _tutorialAdvance;
 
-  void _showTipsDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Image.asset('assets/images/kuma.png', width: 32, height: 32, filterQuality: FilterQuality.none),
-            const SizedBox(width: 12),
-            const Text('Kuma\'s Tips', style: TextStyle(color: Color(0xFF8b6f47))),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: _kumaService.tips
-                .map((tip) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('• ', style: TextStyle(color: Color(0xFF8b6f47), fontWeight: FontWeight.bold)),
-                          Expanded(child: Text(tip)),
-                        ],
-                      ),
-                    ))
-                .toList(),
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Thanks, Kuma!'),
-          ),
-        ],
-      ),
-    );
+  void _onKumaTap() {
+    // Show a motivational message on tap
+    final msg = _kumaService.getRandomMessage();
+    setState(() {
+      _kumaBubbleText = msg.text;
+      _kumaEmotion = msg.emotion;
+      _showKumaBubble = true;
+    });
   }
 
   @override
@@ -428,24 +399,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              // Kuma in top-right corner
+              // Kuma in top-right corner (60x60, idle with breathing)
               if (_kumaService.showKuma)
                 Positioned(
                   top: 8,
                   right: 8,
                   child: KumaMascot(
                     key: _kumaKey,
-                    size: KumaMascotSize.small,
-                    initialMood: _kumaMood,
-                    bubbleText: _kumaBubbleText,
+                    emotion: _kumaEmotion,
+                    size: 60,
+                    showMessage: _showKumaBubble,
+                    message: _kumaBubbleText,
                     bubbleTailDirection: BubbleTailDirection.right,
-                    onTap: _showTipsDialog,
+                    onTap: _onKumaTap,
                     onBubbleDismissed: () {
                       // Advance tutorial if running
                       if (_tutorialAdvance != null) {
                         _tutorialAdvance!();
                       }
-                      setState(() => _kumaBubbleText = null);
+                      setState(() => _showKumaBubble = false);
                     },
                   ),
                 ),

@@ -4,7 +4,7 @@ import 'sign_up_screen.dart';
 import '../../services/auth_service.dart';
 import '../../services/kuma_service.dart';
 import '../../widgets/kuma_mascot.dart';
-import '../../widgets/speech_bubble.dart';
+import '../../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -60,11 +60,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 // Kuma mascot with welcome bubble
                 Center(
                   child: KumaMascot(
-                    size: KumaMascotSize.large,
-                    initialMood: welcomeMsg.mood,
-                    bubbleText: welcomeMsg.text,
+                    size: 120,
+                    emotion: welcomeMsg.emotion,
+                    showMessage: true,
+                    message: welcomeMsg.text,
                     bubbleTailDirection: BubbleTailDirection.bottom,
-                    autoDismissBubble: false,
                   ),
                 ),
                 const SizedBox(height: 24),

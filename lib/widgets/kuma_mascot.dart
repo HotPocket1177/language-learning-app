@@ -1,42 +1,35 @@
-import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/kuma_message.dart';
 import '../services/kuma_service.dart';
-import 'speech_bubble.dart';
+import 'kuma_speech_bubble.dart';
 
-/// Kuma mascot widget with mood-based animations and optional speech bubble.
+/// Kuma mascot widget with emotion-based animations and optional speech bubble.
 ///
-/// Sizes:
-///   [KumaMascotSize.small]  – 50x50  (home screen corner)
-///   [KumaMascotSize.medium] – 70x70  (review screen corner)
-///   [KumaMascotSize.large]  – 120x120 (welcome screen hero)
-enum KumaMascotSize { small, medium, large }
-
+/// Emotion states and their animations:
+///   [KumaEmotion.idle]         – subtle breathing (scale 1.0 ↔ 1.02, 2s loop)
+///   [KumaEmotion.happy]        – bounce (up/down 10px, 0.5s)
+///   [KumaEmotion.excited]      – jump (up 20px, faster bounce)
+///   [KumaEmotion.celebrating]  – spin 360° + scale pulse
+///   [KumaEmotion.encouraging]  – gentle nod (rotate ±5°)
+///   [KumaEmotion.sad]          – slow droop (opacity 0.7, move down 5px)
 class KumaMascot extends StatefulWidget {
-  final KumaMascotSize size;
-  final KumaMood initialMood;
+  final KumaEmotion emotion;
+  final double size;
+  final bool showMessage;
+  final String? message;
   final VoidCallback? onTap;
-
-  /// If non-null, the bubble text is shown immediately.
-  final String? bubbleText;
-
-  /// Direction of the speech bubble tail
   final BubbleTailDirection bubbleTailDirection;
-
-  /// Whether to auto-dismiss the bubble after 5 s
-  final bool autoDismissBubble;
-
-  /// Called when the bubble is dismissed
   final VoidCallback? onBubbleDismissed;
 
   const KumaMascot({
     super.key,
-    this.size = KumaMascotSize.medium,
-    this.initialMood = KumaMood.idle,
+    this.emotion = KumaEmotion.idle,
+    this.size = 80.0,
+    this.showMessage = false,
+    this.message,
     this.onTap,
-    this.bubbleText,
     this.bubbleTailDirection = BubbleTailDirection.bottom,
-    this.autoDismissBubble = true,
     this.onBubbleDismissed,
   });
 
@@ -45,124 +38,180 @@ class KumaMascot extends StatefulWidget {
 }
 
 class KumaMascotState extends State<KumaMascot> with TickerProviderStateMixin {
+  // Idle: breathing animation (scale 1.0 ↔ 1.02, 2s loop)
   late AnimationController _idleController;
+  late Animation<double> _idleScaleAnimation;
+
+  // Happy: bounce (up/down 10px, 0.5s)
   late AnimationController _bounceController;
-  late AnimationController _shakeController;
+  late Animation<double> _bounceAnimation;
 
-  late Animation<double> _idleAnimation; // subtle breathing
-  late Animation<double> _bounceAnimation; // happy / celebrate
-  late Animation<double> _shakeAnimation; // wave / sad
+  // Excited: jump (up 20px, faster bounce)
+  late AnimationController _jumpController;
+  late Animation<double> _jumpAnimation;
 
-  KumaMood _mood = KumaMood.idle;
-  String? _currentBubbleText;
-  Timer? _dismissTimer;
+  // Celebrating: spin 360° + scale pulse
+  late AnimationController _celebrateController;
+  late Animation<double> _spinAnimation;
+  late Animation<double> _pulseAnimation;
+
+  // Encouraging: gentle nod (rotate ±5°)
+  late AnimationController _nodController;
+  late Animation<double> _nodAnimation;
+
+  // Sad: slow droop (move down 5px)
+  late AnimationController _droopController;
+  late Animation<double> _droopAnimation;
+
+  KumaEmotion _currentEmotion = KumaEmotion.idle;
+  String? _currentMessage;
+  bool _showBubble = false;
 
   @override
   void initState() {
     super.initState();
-    _mood = widget.initialMood;
-    _currentBubbleText = widget.bubbleText;
+    _currentEmotion = widget.emotion;
+    _currentMessage = widget.message;
+    _showBubble = widget.showMessage && widget.message != null;
 
-    // Idle breathing
+    _initAnimations();
+    _playEmotionAnimation();
+  }
+
+  void _initAnimations() {
+    // Idle: breathing scale
     _idleController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     )..repeat(reverse: true);
-    _idleAnimation = Tween<double>(begin: 0, end: 3).animate(
+    _idleScaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
       CurvedAnimation(parent: _idleController, curve: Curves.easeInOut),
     );
 
-    // Bounce
+    // Happy: bounce up/down 10px
     _bounceController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
-    _bounceAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -12.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -12.0, end: 0.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -6.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -6.0, end: 0.0), weight: 1),
-    ]).animate(CurvedAnimation(parent: _bounceController, curve: Curves.easeOut));
-
-    // Shake (wave / sad)
-    _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _shakeAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 5.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 5.0, end: -5.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -5.0, end: 3.0), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: 3.0, end: 0.0), weight: 1),
-    ]).animate(CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut));
+    _bounceAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -10.0, end: 0.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -5.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -5.0, end: 0.0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut));
 
-    _playMoodAnimation();
-    _startDismissTimer();
+    // Excited: jump up 20px, faster
+    _jumpController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _jumpAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -20.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -20.0, end: 0.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: -10.0), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -10.0, end: 0.0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _jumpController, curve: Curves.easeOut));
+
+    // Celebrating: spin 360° + scale pulse
+    _celebrateController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _spinAnimation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
+      CurvedAnimation(parent: _celebrateController, curve: Curves.easeInOut),
+    );
+    _pulseAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.15), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 1.15, end: 1.0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _celebrateController, curve: Curves.easeInOut));
+
+    // Encouraging: gentle nod ±5°
+    _nodController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _nodAnimation = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(begin: 0.0, end: 5.0 * math.pi / 180),
+        weight: 1,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: 5.0 * math.pi / 180, end: -5.0 * math.pi / 180),
+        weight: 2,
+      ),
+      TweenSequenceItem(
+        tween: Tween(begin: -5.0 * math.pi / 180, end: 0.0),
+        weight: 1,
+      ),
+    ]).animate(CurvedAnimation(parent: _nodController, curve: Curves.easeInOut));
+
+    // Sad: droop down 5px
+    _droopController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _droopAnimation = Tween<double>(begin: 0.0, end: 5.0).animate(
+      CurvedAnimation(parent: _droopController, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void didUpdateWidget(KumaMascot oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialMood != oldWidget.initialMood) {
-      setMood(widget.initialMood);
+    if (widget.emotion != oldWidget.emotion) {
+      setEmotion(widget.emotion);
     }
-    if (widget.bubbleText != oldWidget.bubbleText) {
-      _dismissTimer?.cancel();
-      setState(() => _currentBubbleText = widget.bubbleText);
-      _startDismissTimer();
-    }
-  }
-
-  void _startDismissTimer() {
-    if (_currentBubbleText != null && widget.autoDismissBubble) {
-      _dismissTimer?.cancel();
-      _dismissTimer = Timer(const Duration(seconds: 5), () {
-        if (mounted) {
-          setState(() => _currentBubbleText = null);
-          widget.onBubbleDismissed?.call();
-        }
+    if (widget.message != oldWidget.message || widget.showMessage != oldWidget.showMessage) {
+      setState(() {
+        _currentMessage = widget.message;
+        _showBubble = widget.showMessage && widget.message != null;
       });
     }
   }
 
-  /// Public: trigger a mood + optional bubble from parent
-  void setMood(KumaMood mood, {String? bubbleText}) {
+  /// Public: trigger an emotion + optional message from parent
+  void setEmotion(KumaEmotion emotion, {String? message}) {
     setState(() {
-      _mood = mood;
-      if (bubbleText != null) _currentBubbleText = bubbleText;
+      _currentEmotion = emotion;
+      if (message != null) {
+        _currentMessage = message;
+        _showBubble = true;
+      }
     });
-    _playMoodAnimation();
-    if (bubbleText != null) _startDismissTimer();
+    _playEmotionAnimation();
   }
 
   /// Public: show a KumaMessage
-  void showMessage(KumaMessage message) {
-    setMood(message.mood, bubbleText: message.text);
+  void showMessage(KumaMessage msg) {
+    setEmotion(msg.emotion, message: msg.text);
   }
 
-  void _playMoodAnimation() {
-    switch (_mood) {
-      case KumaMood.happy:
-      case KumaMood.celebrate:
+  void _playEmotionAnimation() {
+    // Reset all non-idle controllers
+    _bounceController.reset();
+    _jumpController.reset();
+    _celebrateController.reset();
+    _nodController.reset();
+    _droopController.reset();
+
+    switch (_currentEmotion) {
+      case KumaEmotion.happy:
         _bounceController.forward(from: 0);
         break;
-      case KumaMood.wave:
-      case KumaMood.sad:
-        _shakeController.forward(from: 0);
+      case KumaEmotion.excited:
+        _jumpController.forward(from: 0);
         break;
-      case KumaMood.idle:
+      case KumaEmotion.celebrating:
+        _celebrateController.forward(from: 0);
         break;
-    }
-  }
-
-  double get _px {
-    switch (widget.size) {
-      case KumaMascotSize.small:
-        return 50;
-      case KumaMascotSize.medium:
-        return 70;
-      case KumaMascotSize.large:
-        return 120;
+      case KumaEmotion.encouraging:
+        _nodController.forward(from: 0);
+        break;
+      case KumaEmotion.sad:
+        _droopController.forward(from: 0);
+        break;
+      case KumaEmotion.idle:
+        break; // idle breathing runs continuously
     }
   }
 
@@ -170,8 +219,10 @@ class KumaMascotState extends State<KumaMascot> with TickerProviderStateMixin {
   void dispose() {
     _idleController.dispose();
     _bounceController.dispose();
-    _shakeController.dispose();
-    _dismissTimer?.cancel();
+    _jumpController.dispose();
+    _celebrateController.dispose();
+    _nodController.dispose();
+    _droopController.dispose();
     super.dispose();
   }
 
@@ -184,49 +235,92 @@ class KumaMascotState extends State<KumaMascot> with TickerProviderStateMixin {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Speech bubble (above Kuma)
-        if (_currentBubbleText != null)
+        if (_showBubble && _currentMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: SpeechBubble(
-              text: _currentBubbleText!,
+            child: KumaSpeechBubble(
+              text: _currentMessage!,
               tailDirection: widget.bubbleTailDirection,
-              onDismiss: () {
-                _dismissTimer?.cancel();
-                setState(() => _currentBubbleText = null);
+              onDismissed: () {
+                setState(() => _showBubble = false);
                 widget.onBubbleDismissed?.call();
               },
             ),
           ),
 
-        // Kuma image
+        // Kuma image with animations
         GestureDetector(
           onTap: widget.onTap,
           child: AnimatedBuilder(
-            animation: Listenable.merge([_idleAnimation, _bounceAnimation, _shakeAnimation]),
+            animation: Listenable.merge([
+              _idleScaleAnimation,
+              _bounceAnimation,
+              _jumpAnimation,
+              _spinAnimation,
+              _pulseAnimation,
+              _nodAnimation,
+              _droopAnimation,
+            ]),
             builder: (context, child) {
-              final dy = _idleAnimation.value +
-                  (_bounceController.isAnimating ? _bounceAnimation.value : 0.0);
-              final dx = _shakeController.isAnimating ? _shakeAnimation.value : 0.0;
-              final double angle = _mood == KumaMood.celebrate && _bounceController.isAnimating
-                  ? _bounceAnimation.value * 0.02
-                  : 0.0;
+              // Calculate transforms based on current emotion
+              double translateY = 0.0;
+              double rotation = 0.0;
+              double scale = _idleScaleAnimation.value;
+              double opacity = 1.0;
+
+              switch (_currentEmotion) {
+                case KumaEmotion.happy:
+                  if (_bounceController.isAnimating) {
+                    translateY = _bounceAnimation.value;
+                  }
+                  break;
+                case KumaEmotion.excited:
+                  if (_jumpController.isAnimating) {
+                    translateY = _jumpAnimation.value;
+                  }
+                  break;
+                case KumaEmotion.celebrating:
+                  if (_celebrateController.isAnimating) {
+                    rotation = _spinAnimation.value;
+                    scale = _pulseAnimation.value;
+                  }
+                  break;
+                case KumaEmotion.encouraging:
+                  if (_nodController.isAnimating) {
+                    rotation = _nodAnimation.value;
+                  }
+                  break;
+                case KumaEmotion.sad:
+                  opacity = 0.7;
+                  if (_droopController.isAnimating) {
+                    translateY = _droopAnimation.value;
+                  } else if (_droopController.isCompleted) {
+                    translateY = 5.0;
+                  }
+                  break;
+                case KumaEmotion.idle:
+                  break;
+              }
 
               return Transform.translate(
-                offset: Offset(dx, dy),
+                offset: Offset(0, translateY),
                 child: Transform.rotate(
-                  angle: angle,
-                  child: child,
+                  angle: rotation,
+                  child: Transform.scale(
+                    scale: scale,
+                    child: Opacity(
+                      opacity: opacity,
+                      child: child,
+                    ),
+                  ),
                 ),
               );
             },
-            child: Opacity(
-              opacity: _mood == KumaMood.sad ? 0.75 : 1.0,
-              child: Image.asset(
-                'assets/images/kuma.png',
-                width: _px,
-                height: _px,
-                filterQuality: FilterQuality.none, // keep pixel art crisp
-              ),
+            child: Image.asset(
+              'assets/images/kuma.png',
+              width: widget.size,
+              height: widget.size,
+              filterQuality: FilterQuality.none, // keep pixel art crisp
             ),
           ),
         ),

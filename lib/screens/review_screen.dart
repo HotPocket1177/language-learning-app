@@ -7,7 +7,7 @@ import '../models/user_settings.dart';
 import '../models/kuma_message.dart';
 import '../services/kuma_service.dart';
 import '../widgets/kuma_mascot.dart';
-import '../widgets/speech_bubble.dart';
+import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
 
 class ReviewScreen extends StatefulWidget {
   final String itemType;
@@ -38,7 +38,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final GlobalKey<KumaMascotState> _kumaKey = GlobalKey();
   final KumaService _kumaService = KumaService();
   String? _kumaBubbleText;
-  KumaMood _kumaMood = KumaMood.idle;
+  KumaEmotion _kumaEmotion = KumaEmotion.idle;
+  bool _showKumaBubble = false;
+  int _correctStreak = 0;
 
   @override
   void initState() {
@@ -139,13 +141,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
     if (_kumaService.showKuma) {
       KumaMessage reaction;
       if (difficulty == ReviewDifficulty.again) {
+        _correctStreak = 0;
         reaction = _kumaService.getWrongAnswerReaction();
       } else {
-        reaction = _kumaService.getCorrectAnswerReaction();
+        _correctStreak++;
+        if (_correctStreak >= 5 && _correctStreak % 5 == 0) {
+          reaction = _kumaService.getStreakReaction(_correctStreak);
+        } else {
+          reaction = _kumaService.getCorrectAnswerReaction();
+        }
       }
       setState(() {
         _kumaBubbleText = reaction.text;
-        _kumaMood = reaction.mood;
+        _kumaEmotion = reaction.emotion;
+        _showKumaBubble = true;
       });
     }
 
@@ -160,7 +169,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       final completeMsg = _kumaService.getSessionCompleteReaction();
       setState(() {
         _kumaBubbleText = completeMsg.text;
-        _kumaMood = completeMsg.mood;
+        _kumaEmotion = completeMsg.emotion;
+        _showKumaBubble = true;
       });
     }
   }
@@ -283,11 +293,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
             // Kuma celebrates session completion
             if (_kumaService.showKuma)
               KumaMascot(
-                size: KumaMascotSize.large,
-                initialMood: KumaMood.celebrate,
-                bubbleText: _kumaBubbleText ?? 'Great session!',
+                emotion: KumaEmotion.celebrating,
+                size: 120,
+                showMessage: true,
+                message: _kumaBubbleText ?? 'Great session! やった! 🎉',
                 bubbleTailDirection: BubbleTailDirection.bottom,
-                autoDismissBubble: false,
               ),
             if (_kumaService.showKuma) const SizedBox(height: 16),
             if (!_kumaService.showKuma) ...[
@@ -525,19 +535,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ],
         ),
 
-        // Kuma in bottom-left corner
+        // Kuma in bottom-left corner (50x50)
         if (_kumaService.showKuma)
           Positioned(
             bottom: 16,
             left: 8,
             child: KumaMascot(
               key: _kumaKey,
-              size: KumaMascotSize.small,
-              initialMood: _kumaMood,
-              bubbleText: _kumaBubbleText,
+              emotion: _kumaEmotion,
+              size: 50,
+              showMessage: _showKumaBubble,
+              message: _kumaBubbleText,
               bubbleTailDirection: BubbleTailDirection.left,
               onBubbleDismissed: () {
-                setState(() => _kumaBubbleText = null);
+                setState(() => _showKumaBubble = false);
               },
             ),
           ),
