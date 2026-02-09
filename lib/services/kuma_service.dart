@@ -65,6 +65,12 @@ class KumaService {
     await prefs.setBool(_keyTutorialCompleted, true);
   }
 
+  Future<void> resetTutorial() async {
+    _tutorialCompleted = false;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyTutorialCompleted, false);
+  }
+
   /// Duration between random messages based on frequency setting
   Duration get messageInterval {
     switch (_messageFrequency) {

@@ -4,7 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/study_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/language_selector_screen.dart';
+import 'screens/tutorial_screen.dart';
 import 'screens/auth/welcome_screen.dart';
+import 'services/kuma_service.dart';
 import 'services/supabase_service.dart';
 
 void main() async {
@@ -84,6 +86,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           '/home': (context) => const HomeScreen(),
+          '/tutorial': (context) => const TutorialScreen(),
           '/language-selector': (context) => const LanguageSelectorScreen(),
           '/welcome': (context) => const WelcomeScreen(),
         },
@@ -114,6 +117,7 @@ class AppInitializer extends StatefulWidget {
 
 class _AppInitializerState extends State<AppInitializer> {
   bool _isLoading = true;
+  bool _tutorialCompleted = true;
 
   @override
   void initState() {
@@ -123,9 +127,12 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _loadData() async {
     final provider = Provider.of<StudyProvider>(context, listen: false);
+    final kumaService = KumaService();
 
     try {
       await provider.loadData();
+      await kumaService.load();
+      _tutorialCompleted = kumaService.tutorialCompleted;
     } catch (_) {
       // Data load failed - will use defaults
     } finally {
@@ -167,6 +174,11 @@ class _AppInitializerState extends State<AppInitializer> {
         // Check if language is selected
         if (provider.selectedLanguage == null) {
           return const LanguageSelectorScreen();
+        }
+
+        // Show tutorial if not completed yet
+        if (!_tutorialCompleted) {
+          return const TutorialScreen();
         }
 
         // Show home screen

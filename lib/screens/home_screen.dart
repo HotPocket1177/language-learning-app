@@ -42,13 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _initKuma() async {
     await _kumaService.load();
     if (!mounted) return;
-
-    // Show tutorial if first time
-    if (!_kumaService.tutorialCompleted && _kumaService.showKuma) {
-      _showTutorial();
-      return;
-    }
-
     _startMessageTimer();
   }
 
@@ -67,32 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
   }
-
-  void _showTutorial() {
-    final messages = _kumaService.tutorialMessages;
-    int step = 0;
-
-    void showStep() {
-      if (!mounted || step >= messages.length) {
-        _kumaService.completeTutorial();
-        _startMessageTimer();
-        return;
-      }
-      setState(() {
-        _kumaBubbleText = messages[step].text;
-        _kumaEmotion = messages[step].emotion;
-        _showKumaBubble = true;
-      });
-      step++;
-    }
-
-    // Show first step, subsequent steps shown when bubble is dismissed
-    showStep();
-    _tutorialAdvance = showStep;
-  }
-
-  // Callback for advancing tutorial — set by _showTutorial
-  VoidCallback? _tutorialAdvance;
 
   void _onKumaTap() {
     // Show a motivational message on tap
@@ -413,10 +380,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     bubbleTailDirection: BubbleTailDirection.right,
                     onTap: _onKumaTap,
                     onBubbleDismissed: () {
-                      // Advance tutorial if running
-                      if (_tutorialAdvance != null) {
-                        _tutorialAdvance!();
-                      }
                       setState(() => _showKumaBubble = false);
                     },
                   ),

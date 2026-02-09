@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/language_content.dart';
 import '../providers/study_provider.dart';
+import '../services/kuma_service.dart';
+import 'tutorial_screen.dart';
 
 class LanguageSelectorScreen extends StatelessWidget {
   const LanguageSelectorScreen({super.key});
@@ -48,9 +50,20 @@ class LanguageSelectorScreen extends StatelessWidget {
                         language: language,
                         onTap: () async {
                           final provider = context.read<StudyProvider>();
+                          final kumaService = KumaService();
                           await provider.selectLanguage(language);
+                          await kumaService.load();
                           if (context.mounted) {
-                            Navigator.of(context).pushReplacementNamed('/home');
+                            if (!kumaService.tutorialCompleted) {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (_) => const TutorialScreen()),
+                                (route) => false,
+                              );
+                            } else {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            }
                           }
                         },
                       ),

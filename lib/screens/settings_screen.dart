@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/user_settings.dart';
 import '../services/kuma_service.dart';
+import 'tutorial_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -236,6 +237,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       final v = value.round();
                       setState(() => _messageFrequency = v);
                       _kumaService.setMessageFrequency(v);
+                    },
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.replay, color: Color(0xFF8b6f47)),
+                    title: const Text('Replay Tutorial'),
+                    subtitle: const Text('Watch the intro tutorial again'),
+                    onTap: () async {
+                      final nav = Navigator.of(context);
+                      await _kumaService.resetTutorial();
+                      nav.pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (_) => const TutorialScreen()),
+                        (route) => false,
+                      );
                     },
                   ),
                 ]),
