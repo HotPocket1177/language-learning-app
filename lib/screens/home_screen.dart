@@ -9,6 +9,8 @@ import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
 import 'vocabulary_screen.dart';
 import 'sentences_screen.dart';
 import 'kanji_screen.dart';
+// TODO: Re-enable when AI conversations are ready
+// import 'conversation_topics_screen.dart';
 import 'mastered_gallery_screen.dart';
 import 'practice_deck_screen.dart';
 import 'profile_screen.dart';
@@ -314,6 +316,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         if (provider.hasSpecialContent) const SizedBox(height: 12),
+                        const SizedBox(height: 12),
+
+                        // TODO: Re-enable when AI conversations are ready
+                        // _ConversationsCard(
+                        //   totalMastered: stats.totalWordsLearned +
+                        //       stats.totalSentencesLearned,
+                        //   level: stats.level,
+                        //   onTap: () => Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (_) =>
+                        //             const ConversationTopicsScreen()),
+                        //   ),
+                        // ),
+                        _ComingSoonCard(),
                         const SizedBox(height: 24),
 
                         // Progress Sections
@@ -535,6 +552,56 @@ class _CountBadge extends StatelessWidget {
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: color,
+        ),
+      ),
+    );
+  }
+}
+
+/// Conversations card — unlock at 20 mastered items OR Level 5+.
+// TODO: Re-enable _ConversationsCard when AI conversations are ready
+
+class _ComingSoonCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Opacity(
+                opacity: 0.5,
+                child: Image.asset(
+                  'assets/images/kuma.png',
+                  width: 48,
+                  height: 48,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'AI Conversations',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Coming soon!',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.lock, size: 20, color: Colors.grey[400]),
+          ],
         ),
       ),
     );

@@ -408,6 +408,14 @@ class StudyProvider with ChangeNotifier {
     }
   }
 
+  // Award XP for completing a conversation
+  Future<void> addConversationXp(int amount) async {
+    _userStats.addXp(amount);
+    _userStats.updateStreak();
+    await _saveData();
+    notifyListeners();
+  }
+
   // Add vocabulary to practice deck
   Future<void> addVocabularyToPractice(VocabularyItem item) async {
     if (!_practiceVocabulary.any((e) => e.id == item.id) &&

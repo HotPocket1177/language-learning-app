@@ -40,6 +40,9 @@ dependencies:
   # Supabase
   supabase_flutter: ^2.8.0
 
+  # Used by claude_api_service.dart (AI features — currently disabled in UI)
+  http: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

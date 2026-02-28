@@ -750,4 +750,78 @@ class DatabaseService {
       return {'newCount': totalAvailable, 'dueCount': 0};
     }
   }
+
+  // ============================================
+  // CONVERSATION METHODS
+  // ============================================
+
+  /// Save a completed conversation to Supabase.
+  Future<void> saveConversation({
+    required String userId,
+    required String topic,
+    required List<Map<String, dynamic>> messages,
+    required int messageCount,
+    int xpEarned = 20,
+    bool isTyped = false,
+    int japaneseCharsCount = 0,
+    int correctionsCount = 0,
+    double accuracyScore = 1.0,
+  }) async {
+    try {
+      await _supabase.from('conversations').insert({
+        'user_id': userId,
+        'topic': topic,
+        'messages': messages,
+        'message_count': messageCount,
+        'xp_earned': xpEarned,
+        'completed': true,
+        'is_typed': isTyped,
+        'japanese_chars_count': japaneseCharsCount,
+        'corrections_count': correctionsCount,
+        'accuracy_score': accuracyScore,
+      });
+    } on PostgrestException catch (e) {
+      throw 'Failed to save conversation: ${e.message}';
+    } catch (e) {
+      throw 'Failed to save conversation: $e';
+    }
+  }
+
+  /// Load conversation history from Supabase.
+  Future<List<Map<String, dynamic>>> getConversationHistory({
+    required String userId,
+    int limit = 50,
+  }) async {
+    try {
+      final response = await _supabase
+          .from('conversations')
+          .select()
+          .eq('user_id', userId)
+          .order('created_at', ascending: false)
+          .limit(limit);
+      return List<Map<String, dynamic>>.from(response as List);
+    } on PostgrestException catch (e) {
+      throw 'Failed to load conversations: ${e.message}';
+    } catch (e) {
+      throw 'Failed to load conversations: $e';
+    }
+  }
+
+  /// Delete a conversation by ID.
+  Future<void> deleteConversation({
+    required String userId,
+    required String conversationId,
+  }) async {
+    try {
+      await _supabase
+          .from('conversations')
+          .delete()
+          .eq('user_id', userId)
+          .eq('id', conversationId);
+    } on PostgrestException catch (e) {
+      throw 'Failed to delete conversation: ${e.message}';
+    } catch (e) {
+      throw 'Failed to delete conversation: $e';
+    }
+  }
 }
