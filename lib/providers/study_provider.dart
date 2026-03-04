@@ -42,6 +42,10 @@ class StudyProvider with ChangeNotifier {
   int _dueSentencesCount = 0;
   int _dueKanjiCount = 0;
 
+  // Study history for heatmap & achievements
+  List<String> _studyDates = [];
+  int _previousStudyGapDays = 0;
+
   // Getters
   SupportedLanguage? get selectedLanguage => _selectedLanguage;
   UserStats get userStats => _userStats;
@@ -61,6 +65,12 @@ class StudyProvider with ChangeNotifier {
   int get dueVocabularyCount => _dueVocabularyCount;
   int get dueSentencesCount => _dueSentencesCount;
   int get dueKanjiCount => _dueKanjiCount;
+
+  // Study history & achievement getters
+  List<String> get studyDates => _studyDates;
+  int get previousStudyGapDays => _previousStudyGapDays;
+  int get studiedLanguageCount => _studiedLanguageCount;
+  int _studiedLanguageCount = 0;
 
   // Auth getters
   bool get isSignedIn => _authService.isSignedIn;
@@ -133,6 +143,8 @@ class StudyProvider with ChangeNotifier {
     if (isSignedIn && currentUserId != null) {
       try {
         await _loadFromSupabase();
+        await loadStudyDates();
+        await loadStudiedLanguageCount();
         return;
       } catch (_) {
         // Supabase load failed - fall back to local storage
@@ -141,6 +153,8 @@ class StudyProvider with ChangeNotifier {
 
     // Fall back to local storage
     await _loadFromLocal();
+    await loadStudyDates();
+    await loadStudiedLanguageCount();
   }
 
   // Load from Supabase
@@ -329,7 +343,9 @@ class StudyProvider with ChangeNotifier {
       _practiceVocabulary.removeWhere((e) => e.id == item.id);
       _userStats.addXp(10);
       _userStats.totalWordsLearned++;
+      _calculateStudyGap();
       _userStats.updateStreak();
+      await _recordStudyDate();
 
       await _saveData();
 
@@ -358,7 +374,9 @@ class StudyProvider with ChangeNotifier {
       _practiceSentences.removeWhere((e) => e.id == item.id);
       _userStats.addXp(10);
       _userStats.totalSentencesLearned++;
+      _calculateStudyGap();
       _userStats.updateStreak();
+      await _recordStudyDate();
 
       await _saveData();
 
@@ -386,7 +404,9 @@ class StudyProvider with ChangeNotifier {
       _masteredKanji.add(kanjiId);
       _userStats.addXp(10);
       _userStats.totalKanjiLearned++;
+      _calculateStudyGap();
       _userStats.updateStreak();
+      await _recordStudyDate();
 
       await _saveData();
 
@@ -707,7 +727,10 @@ class StudyProvider with ChangeNotifier {
 
     // Add XP for review
     _userStats.addXp(5);
+    _trackReviewResult(difficulty);
+    _calculateStudyGap();
     _userStats.updateStreak();
+    await _recordStudyDate();
 
     // Save
     await _saveData();
@@ -763,7 +786,10 @@ class StudyProvider with ChangeNotifier {
 
     // Add XP for review
     _userStats.addXp(5);
+    _trackReviewResult(difficulty);
+    _calculateStudyGap();
     _userStats.updateStreak();
+    await _recordStudyDate();
 
     // Save
     await _saveData();
@@ -831,6 +857,63 @@ class StudyProvider with ChangeNotifier {
 
       _updateDueCountsFromLocal();
       notifyListeners();
+    }
+  }
+
+  // ============================================
+  // STUDY HISTORY & ACHIEVEMENT HELPERS
+  // ============================================
+
+  /// Record today's date in study history (for heatmap)
+  Future<void> _recordStudyDate() async {
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    if (!_studyDates.contains(today)) {
+      _studyDates.add(today);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setStringList('studyDates', _studyDates);
+    }
+  }
+
+  /// Load study dates from SharedPreferences
+  Future<void> loadStudyDates() async {
+    final prefs = await SharedPreferences.getInstance();
+    _studyDates = prefs.getStringList('studyDates') ?? [];
+  }
+
+  /// Count how many languages have saved stats
+  Future<void> loadStudiedLanguageCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    int count = 0;
+    for (final lang in SupportedLanguage.values) {
+      final statsJson = prefs.getString('userStats_${lang.code}');
+      if (statsJson != null) {
+        final decoded = json.decode(statsJson) as Map<String, dynamic>;
+        final total = (decoded['totalWordsLearned'] ?? 0) +
+            (decoded['totalSentencesLearned'] ?? 0) +
+            (decoded['totalKanjiLearned'] ?? 0);
+        if (total > 0) count++;
+      }
+    }
+    _studiedLanguageCount = count;
+  }
+
+  /// Calculate gap between previous lastStudyDate and now (for Comeback badge)
+  void _calculateStudyGap() {
+    if (_userStats.lastStudyDate != null) {
+      _previousStudyGapDays =
+          DateTime.now().difference(_userStats.lastStudyDate!).inDays;
+    }
+  }
+
+  /// Track a correct or incorrect review for consecutive-correct streak
+  void _trackReviewResult(ReviewDifficulty difficulty) {
+    if (difficulty == ReviewDifficulty.again) {
+      _userStats.consecutiveCorrect = 0;
+    } else {
+      _userStats.consecutiveCorrect++;
+      if (_userStats.consecutiveCorrect > _userStats.bestConsecutiveCorrect) {
+        _userStats.bestConsecutiveCorrect = _userStats.consecutiveCorrect;
+      }
     }
   }
 

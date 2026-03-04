@@ -2,9 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/study_provider.dart';
+import '../services/achievement_service.dart';
+import 'achievements_screen.dart';
+import 'stats_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final AchievementService _achievementService = AchievementService();
+  bool _achievementsLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAchievements();
+  }
+
+  Future<void> _loadAchievements() async {
+    await _achievementService.load();
+    if (!mounted) return;
+    final provider = Provider.of<StudyProvider>(context, listen: false);
+    await _achievementService.checkAchievements(provider);
+    if (mounted) setState(() => _achievementsLoaded = true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,48 +203,110 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Achievements Card (Placeholder)
+                // Achievements Card
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Achievements',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF8b6f47),
-                              ),
-                        ),
-                        const SizedBox(height: 16),
-                        Center(
-                          child: Column(
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AchievementsScreen()),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Icon(
-                                Icons.emoji_events,
-                                size: 60,
-                                color: Colors.grey[400],
-                              ),
-                              const SizedBox(height: 12),
                               Text(
-                                'Coming Soon!',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                'Achievements',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFF8b6f47),
+                                    ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                '${_achievementService.unlockedCount}/${AchievementService.allAchievements.length}',
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey[600],
                                     ),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Achievements will be added in a future update',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey[500],
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
                             ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          if (_achievementsLoaded && _achievementService.unlockedCount > 0)
+                            _buildBadgePreview()
+                          else
+                            Center(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.emoji_events, size: 40, color: Colors.grey[400]),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Start studying to earn badges!',
+                                      style: TextStyle(color: Colors.grey[500]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Detailed Stats Button
+                Card(
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StatsScreen()),
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.bar_chart, color: Color(0xFF8b6f47), size: 24),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Detailed Stats',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF8b6f47),
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Streaks, heatmap & progress',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -283,6 +370,38 @@ class ProfileScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildBadgePreview() {
+    final recent = _achievementService.recentUnlocked;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: recent.map((ua) {
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: ua.achievement.color.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(ua.achievement.icon, size: 24, color: ua.achievement.color),
+            ),
+            const SizedBox(height: 6),
+            SizedBox(
+              width: 70,
+              child: Text(
+                ua.achievement.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../services/kuma_service.dart';
+import '../services/achievement_service.dart';
+import '../models/achievement.dart';
 import '../models/kuma_message.dart';
 import '../widgets/kuma_mascot.dart';
 import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
@@ -16,6 +18,7 @@ import 'practice_deck_screen.dart';
 import 'profile_screen.dart';
 import 'settings_screen.dart';
 import 'review_screen.dart';
+import 'stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +30,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<KumaMascotState> _kumaKey = GlobalKey();
   final KumaService _kumaService = KumaService();
+  final AchievementService _achievementService = AchievementService();
   Timer? _messageTimer;
   String? _kumaBubbleText;
   KumaEmotion _kumaEmotion = KumaEmotion.idle;
@@ -38,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<StudyProvider>(context, listen: false).loadDueCounts();
       _initKuma();
+      _achievementService.load();
     });
   }
 
@@ -73,6 +78,91 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _checkAchievements() async {
+    if (!mounted) return;
+    final provider = Provider.of<StudyProvider>(context, listen: false);
+    final newlyUnlocked = await _achievementService.checkAchievements(provider);
+    if (newlyUnlocked.isNotEmpty && mounted) {
+      _showAchievementCelebration(newlyUnlocked);
+    }
+  }
+
+  void _showAchievementCelebration(List<Achievement> achievements) {
+    // Trigger Kuma celebrating
+    setState(() {
+      _kumaEmotion = KumaEmotion.celebrating;
+      _kumaBubbleText = 'おめでとう！ 🎉';
+      _showKumaBubble = true;
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.emoji_events, size: 56, color: Color(0xFFFFD700)),
+            const SizedBox(height: 12),
+            Text(
+              achievements.length == 1
+                  ? 'Achievement Unlocked!'
+                  : '${achievements.length} Achievements Unlocked!',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF8b6f47),
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ...achievements.map((a) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: a.color.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(a.icon, size: 24, color: a.color),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              a.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            Text(
+                              a.titleJp,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Awesome!'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _messageTimer?.cancel();
@@ -97,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dueCount: dueCount,
         itemType: itemType,
         studyNewScreen: studyNewScreen,
+        onReturn: _checkAchievements,
       ),
     );
   }
@@ -363,6 +454,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const PracticeDeckScreen()),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        _MenuButton(
+                          icon: Icons.bar_chart,
+                          title: 'Detailed Stats',
+                          subtitle: 'Streaks, heatmap & progress',
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const StatsScreen()),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -678,6 +780,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
   final int dueCount;
   final String itemType;
   final Widget studyNewScreen;
+  final VoidCallback onReturn;
 
   const _StudyModeBottomSheet({
     required this.title,
@@ -686,6 +789,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
     required this.dueCount,
     required this.itemType,
     required this.studyNewScreen,
+    required this.onReturn,
   });
 
   @override
@@ -740,7 +844,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => studyNewScreen),
-              );
+              ).then((_) => onReturn());
             },
           ),
           const SizedBox(height: 12),
@@ -763,7 +867,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
                     title: '$title Review',
                   ),
                 ),
-              );
+              ).then((_) => onReturn());
             },
           ),
           const SizedBox(height: 12),
@@ -786,7 +890,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
                     title: '$title Practice',
                   ),
                 ),
-              );
+              ).then((_) => onReturn());
             },
           ),
         ],

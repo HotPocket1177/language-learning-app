@@ -8,6 +8,8 @@ class UserStats {
   int totalWordsLearned;
   int totalSentencesLearned;
   int totalKanjiLearned;
+  int consecutiveCorrect;
+  int bestConsecutiveCorrect;
 
   UserStats({
     this.userName = 'Student',
@@ -19,6 +21,8 @@ class UserStats {
     this.totalWordsLearned = 0,
     this.totalSentencesLearned = 0,
     this.totalKanjiLearned = 0,
+    this.consecutiveCorrect = 0,
+    this.bestConsecutiveCorrect = 0,
   });
 
   int get xpForNextLevel => level * 100;
@@ -68,6 +72,8 @@ class UserStats {
       'totalWordsLearned': totalWordsLearned,
       'totalSentencesLearned': totalSentencesLearned,
       'totalKanjiLearned': totalKanjiLearned,
+      'consecutiveCorrect': consecutiveCorrect,
+      'bestConsecutiveCorrect': bestConsecutiveCorrect,
     };
   }
 
@@ -84,6 +90,8 @@ class UserStats {
       totalWordsLearned: json['totalWordsLearned'] ?? 0,
       totalSentencesLearned: json['totalSentencesLearned'] ?? 0,
       totalKanjiLearned: json['totalKanjiLearned'] ?? 0,
+      consecutiveCorrect: json['consecutiveCorrect'] ?? 0,
+      bestConsecutiveCorrect: json['bestConsecutiveCorrect'] ?? 0,
     );
   }
 }
