@@ -6,8 +6,10 @@ import 'screens/home_screen.dart';
 import 'screens/language_selector_screen.dart';
 import 'screens/tutorial_screen.dart';
 import 'screens/auth/welcome_screen.dart';
+import 'services/cosmetics_service.dart';
 import 'services/kuma_service.dart';
 import 'services/supabase_service.dart';
+import 'screens/customization_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -128,17 +130,72 @@ class _AppInitializerState extends State<AppInitializer> {
   Future<void> _loadData() async {
     final provider = Provider.of<StudyProvider>(context, listen: false);
     final kumaService = KumaService();
+    final cosmeticsService = CosmeticsService();
 
     try {
       await provider.loadData();
       await kumaService.load();
+      await cosmeticsService.load();
       _tutorialCompleted = kumaService.tutorialCompleted;
     } catch (_) {
       // Data load failed - will use defaults
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+        _checkSeasonalContent();
       }
+    }
+  }
+
+  Future<void> _checkSeasonalContent() async {
+    final cosmeticsService = CosmeticsService();
+    final seasonalOutfits = await cosmeticsService.checkSeasonalUnlocks();
+
+    if (seasonalOutfits.isNotEmpty && mounted) {
+      final outfit = seasonalOutfits.first;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Seasonal Outfits Available!'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('New ${outfit.name} unlocked!'),
+              const SizedBox(height: 16),
+              Image.asset(
+                outfit.imagePath,
+                width: 100,
+                height: 100,
+                errorBuilder: (_, _, _) => const Icon(
+                  Icons.pets,
+                  size: 60,
+                  color: Color(0xFF8b6f47),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text('Check out the Customize screen!'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Later'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const CustomizationScreen(),
+                  ),
+                );
+              },
+              child: const Text('View Now!'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
