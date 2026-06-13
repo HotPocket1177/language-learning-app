@@ -75,11 +75,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                     letterSpacing: -0.5,
                     shadows: [
                       Shadow(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -94,7 +94,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
-                    color: const Color(0xFF8b6f47).withValues(alpha: 0.7),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.3,
                   ),
@@ -147,8 +147,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF8b6f47),
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                    side: const BorderSide(
-                      color: Color(0xFF8b6f47),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
                       width: 2.5,
                     ),
                     shape: RoundedRectangleBorder(
@@ -171,7 +171,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     Expanded(
                       child: Divider(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.25),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                         thickness: 1.5,
                       ),
                     ),
@@ -180,7 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         'OR',
                         style: TextStyle(
-                          color: const Color(0xFF8b6f47).withValues(alpha: 0.5),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           letterSpacing: 1.5,
@@ -189,7 +189,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Expanded(
                       child: Divider(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.25),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
                         thickness: 1.5,
                       ),
                     ),
@@ -234,7 +234,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   'Your progress will sync across devices',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: const Color(0xFF8b6f47).withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

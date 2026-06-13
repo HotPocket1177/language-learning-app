@@ -124,10 +124,10 @@ class _AppInitializerState extends State<AppInitializer> {
                 outfit.imagePath,
                 width: 100,
                 height: 100,
-                errorBuilder: (_, _, _) => const Icon(
+                errorBuilder: (_, _, _) => Icon(
                   Icons.pets,
                   size: 60,
-                  color: Color(0xFF8b6f47),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),

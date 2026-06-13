@@ -36,7 +36,7 @@ class _PracticeDeckScreenState extends State<PracticeDeckScreen>
           preferredSize: const Size.fromHeight(56),
           child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             ),
             child: TabBar(
               controller: _tabController,
@@ -113,7 +113,7 @@ class _VocabularyPracticeList extends StatelessWidget {
             Icon(
               Icons.fitness_center,
               size: 80,
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -124,7 +124,7 @@ class _VocabularyPracticeList extends StatelessWidget {
             Text(
               'Add words from the study section!',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
             ),
           ],
@@ -190,7 +190,7 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                             Text(
                               widget.item.romaji,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                   ),
                             ),
                           ],
@@ -199,13 +199,13 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           widget.item.category,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
                       ),
@@ -218,7 +218,7 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                     Text(
                       widget.item.english,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: const Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -298,7 +298,7 @@ class _SentencesPracticeList extends StatelessWidget {
             Icon(
               Icons.fitness_center,
               size: 80,
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -309,7 +309,7 @@ class _SentencesPracticeList extends StatelessWidget {
             Text(
               'Add sentences from the study section!',
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
             ),
           ],
@@ -373,13 +373,13 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           widget.item.category,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
                       ),
@@ -389,7 +389,7 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                   Text(
                     widget.item.romaji,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                         ),
                   ),
                   if (showAnswer) ...[
@@ -399,7 +399,7 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                     Text(
                       widget.item.english,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: const Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),

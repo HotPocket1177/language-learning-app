@@ -292,10 +292,10 @@ class _TutorialScreenState extends State<TutorialScreen>
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFF8b6f47).withValues(alpha: 0.4),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
               width: 3,
             ),
           ),
@@ -333,21 +333,21 @@ class _TutorialScreenState extends State<TutorialScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF8b6f47).withValues(alpha: 0.15),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.star, color: Color(0xFF8b6f47), size: 36),
+            child: Icon(Icons.star, color: Theme.of(context).colorScheme.primary, size: 36),
           ),
           const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Level 1',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF8b6f47),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -369,7 +369,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                 '30 / 100 XP',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                 ),
               ),
             ],
@@ -455,7 +455,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                     'Keep it going!',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                     ),
                   ),
                 ],
@@ -474,7 +474,7 @@ class _TutorialScreenState extends State<TutorialScreen>
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: const Center(
@@ -571,12 +571,12 @@ class _MockCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8b6f47).withValues(alpha: 0.15),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -606,7 +606,7 @@ class _MockStudyCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -614,10 +614,10 @@ class _MockStudyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: const Color(0xFF8b6f47), size: 24),
+            child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -626,16 +626,16 @@ class _MockStudyCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
                 ),
               ],
             ),

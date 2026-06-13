@@ -113,7 +113,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     Text(
                       'Stroke Count: ${kanji.strokeCount}',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: const Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -151,7 +151,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                 Text(
                                   kanji.meaning,
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                        color: const Color(0xFF8b6f47),
+                                        color: Theme.of(context).colorScheme.primary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                   textAlign: TextAlign.center,
@@ -169,7 +169,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                 Text(
                                   kanji.meaning,
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                        color: const Color(0xFF8b6f47),
+                                        color: Theme.of(context).colorScheme.primary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                   textAlign: TextAlign.center,
@@ -191,7 +191,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                     'Examples:',
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: const Color(0xFF8b6f47),
+                                          color: Theme.of(context).colorScheme.primary,
                                         ),
                                   ),
                                 ),
@@ -211,7 +211,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                               Text(
                                 showDetails ? 'Tap to collapse' : 'Tap to show details',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey,
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                       fontStyle: FontStyle.italic,
                                     ),
                               ),
@@ -278,7 +278,7 @@ class _DetailRow extends StatelessWidget {
         color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -288,7 +288,7 @@ class _DetailRow extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[700],
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
             ),
           ),

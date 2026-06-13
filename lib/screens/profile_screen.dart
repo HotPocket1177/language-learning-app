@@ -58,10 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
                           child: Text(
                             stats.userName.isNotEmpty ? stats.userName[0].toUpperCase() : 'S',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF8b6f47),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: Icons.star,
                               label: 'Level',
                               value: '${stats.level}',
-                              color: const Color(0xFF8b6f47),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             Container(width: 1, height: 60, color: Colors.grey[300]),
                             _StatColumn(
@@ -142,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Text(
                               '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                   ),
                             ),
                           ],
@@ -164,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Learning Statistics',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
                         const SizedBox(height: 20),
@@ -195,7 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.library_books,
                           label: 'Total Items Learned',
                           value: '${stats.totalWordsLearned + stats.totalSentencesLearned + stats.totalKanjiLearned}',
-                          color: const Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                           isTotal: true,
                         ),
                       ],
@@ -223,14 +223,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Achievements',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF8b6f47),
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                               ),
                               const Spacer(),
                               Text(
                                 '${_achievementService.unlockedCount}/${AchievementService.allAchievements.length}',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Colors.grey[600],
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                     ),
                               ),
                               const SizedBox(width: 4),
@@ -246,11 +246,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: Column(
                                   children: [
-                                    Icon(Icons.emoji_events, size: 40, color: Colors.grey[400]),
+                                    Icon(Icons.emoji_events, size: 40, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
                                     const SizedBox(height: 8),
                                     Text(
                                       'Start studying to earn badges!',
-                                      style: TextStyle(color: Colors.grey[500]),
+                                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                                     ),
                                   ],
                                 ),
@@ -278,10 +278,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(Icons.checkroom, color: Color(0xFF8b6f47), size: 24),
+                            child: Icon(Icons.checkroom, color: Theme.of(context).colorScheme.primary, size: 24),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -292,14 +292,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'Customize Kuma',
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF8b6f47),
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Outfits, themes & seasonal items',
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                       ),
                                 ),
                               ],
@@ -328,10 +328,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(Icons.bar_chart, color: Color(0xFF8b6f47), size: 24),
+                            child: Icon(Icons.bar_chart, color: Theme.of(context).colorScheme.primary, size: 24),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -342,14 +342,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'Detailed Stats',
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF8b6f47),
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Streaks, heatmap & progress',
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                       ),
                                 ),
                               ],
@@ -375,7 +375,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Account',
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF8b6f47),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                           ),
                           const SizedBox(height: 16),
@@ -384,7 +384,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               backgroundColor: const Color(0xFF8b6f47).withValues(alpha: 0.15),
                               child: Icon(
                                 provider.isGuest ? Icons.person_outline : Icons.person,
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             title: Text(

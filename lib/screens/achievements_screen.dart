@@ -63,7 +63,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
                                     .headlineMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: const Color(0xFF8b6f47),
+                                      color: Theme.of(context).colorScheme.primary,
                                     ),
                               ),
                               const SizedBox(height: 4),
@@ -118,7 +118,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               category.displayName,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
             ),
           ],
@@ -182,7 +182,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               isHiddenLocked ? '???' : achievement.title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
             ),
             if (!isHiddenLocked) ...[
@@ -190,7 +190,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               Text(
                 achievement.titleJp,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                     ),
               ),
             ],
@@ -207,7 +207,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               Text(
                 'Unlocked ${_formatDate(_achievementService.unlockedAt(achievement.id)!)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
               ),
             ],
@@ -311,7 +311,7 @@ class _AchievementCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   progressText,
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                 ),
               ],
               if (unlocked)

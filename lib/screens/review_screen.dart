@@ -252,12 +252,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
               color: Colors.green.shade300,
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'All caught up!',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 12),
@@ -268,7 +268,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
               ),
             ),
             const SizedBox(height: 32),
@@ -308,12 +308,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
               ),
               const SizedBox(height: 24),
             ],
-            const Text(
+            Text(
               'Session Complete!',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 12),
@@ -322,7 +322,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
               ),
             ),
             const SizedBox(height: 8),
@@ -399,14 +399,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         Icon(
                           isVocabulary ? Icons.text_fields : Icons.format_quote,
                           size: 16,
-                          color: const Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           isVocabulary ? 'Vocabulary' : 'Sentence',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -417,14 +417,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             category,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF8b6f47),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -487,7 +487,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 romaji,
                                 style: TextStyle(
                                   fontSize: isVocabulary ? 18 : 14,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                   fontStyle: FontStyle.italic,
                                 ),
                                 textAlign: TextAlign.center,
@@ -501,10 +501,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 // English translation
                                 Text(
                                   english,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF8b6f47),
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -514,7 +514,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                   'Tap to reveal answer',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.grey[400],
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                                   ),
                                 ),
                               ],
@@ -559,11 +559,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget _buildDifficultyButtons() {
     return Column(
       children: [
-        const Text(
+        Text(
           'How well did you remember?',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 12),

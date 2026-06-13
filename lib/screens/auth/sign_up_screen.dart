@@ -110,10 +110,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                     shadows: [
                       Shadow(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -126,7 +126,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: const Color(0xFF8b6f47).withValues(alpha: 0.7),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -143,7 +143,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hintText: 'Your name',
                     prefixIcon: const Icon(Icons.person_outline_rounded),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -151,14 +151,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF8b6f47),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
                         width: 2.5,
                       ),
                     ),
@@ -193,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hintText: 'your.email@example.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -201,14 +201,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF8b6f47),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
                         width: 2.5,
                       ),
                     ),
@@ -253,7 +253,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -261,14 +261,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF8b6f47),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
                         width: 2.5,
                       ),
                     ),
@@ -315,7 +315,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -323,14 +323,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF8b6f47),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
                         width: 2.5,
                       ),
                     ),
@@ -395,7 +395,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       'Already have an account? ',
                       style: TextStyle(
-                        color: const Color(0xFF8b6f47).withValues(alpha: 0.7),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                         fontSize: 15,
                       ),
                     ),
@@ -409,10 +409,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           vertical: 4,
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Sign In',
                         style: TextStyle(
-                          color: Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -427,7 +427,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   'By creating an account, you agree to our\nTerms of Service and Privacy Policy',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: const Color(0xFF8b6f47).withValues(alpha: 0.45),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.45),
                     fontSize: 12,
                     height: 1.4,
                   ),

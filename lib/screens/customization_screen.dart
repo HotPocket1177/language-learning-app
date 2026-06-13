@@ -101,12 +101,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
         if (seasonal.isNotEmpty) ...[
           Row(
             children: [
-              const Text(
+              Text(
                 'Seasonal (Limited Time!)',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF8b6f47),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               if (hasActiveSeasonal) ...[
@@ -147,12 +147,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
         ],
 
         // Achievement section
-        const Text(
+        Text(
           'Achievement Outfits',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF8b6f47),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 8),
@@ -180,12 +180,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Current Look',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 12),
@@ -200,7 +200,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
             ),
             Text(
               current.description,
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
             ),
           ],
         ),
@@ -252,8 +252,8 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(2),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF8b6f47),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -306,7 +306,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
       errorBuilder: (_, _, _) => Icon(
         Icons.pets,
         size: size * 0.6,
-        color: const Color(0xFF8b6f47),
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -341,12 +341,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
 
         // Seasonal
         if (seasonal.isNotEmpty) ...[
-          const Text(
+          Text(
             'Seasonal Themes',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF8b6f47),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -356,12 +356,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
 
         // Achievement
         if (achievement.isNotEmpty) ...[
-          const Text(
+          Text(
             'Achievement Themes',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF8b6f47),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -378,12 +378,12 @@ class _CustomizationScreenState extends State<CustomizationScreen>
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Current Theme',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
             const SizedBox(height: 12),
@@ -454,10 +454,10 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                           ),
                           if (isSelected) ...[
                             const SizedBox(width: 8),
-                            const Icon(
+                            Icon(
                               Icons.check_circle,
                               size: 18,
-                              color: Color(0xFF8b6f47),
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ],
                         ],

@@ -157,12 +157,12 @@ class _TutorialBubbleState extends State<_TutorialBubble>
             color: const Color(0xFFF5EBE0),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFF8b6f47),
+              color: Theme.of(context).colorScheme.primary,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),

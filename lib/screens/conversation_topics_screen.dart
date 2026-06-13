@@ -33,7 +33,7 @@ class ConversationTopicsScreen extends StatelessWidget {
             Text(
               'Choose a topic',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -41,7 +41,7 @@ class ConversationTopicsScreen extends StatelessWidget {
             Text(
               'Practice conversations with Kuma-san!',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
             ),
             const SizedBox(height: 20),
@@ -90,7 +90,7 @@ class _TopicCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
         ),
       ),
       child: InkWell(
@@ -108,10 +108,10 @@ class _TopicCard extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 topic.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF8b6f47),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -122,7 +122,7 @@ class _TopicCard extends StatelessWidget {
                 topic.subtitle,
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                 ),
                 textAlign: TextAlign.center,
               ),

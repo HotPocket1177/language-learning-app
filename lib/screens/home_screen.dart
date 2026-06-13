@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   : '${achievements.length} Achievements Unlocked!',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -142,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               a.titleJp,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                               ),
                             ),
                           ],
@@ -287,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: Icons.star,
                                 title: 'Level',
                                 value: '${stats.level}',
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -316,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Text(
                                       'Experience',
                                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                            color: const Color(0xFF8b6f47),
+                                            color: Theme.of(context).colorScheme.primary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
@@ -340,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                       ),
                                 ),
                               ],
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           'Study',
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -428,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           'Your Progress',
                           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: const Color(0xFF8b6f47),
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -581,10 +581,10 @@ class _StudyCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: const Color(0xFF8b6f47), size: 28),
+                child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -595,7 +595,7 @@ class _StudyCard extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                     ),
                     const SizedBox(height: 6),
@@ -604,7 +604,7 @@ class _StudyCard extends StatelessWidget {
                         _CountBadge(
                           count: newCount,
                           label: 'new',
-                          color: const Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
                         _CountBadge(
@@ -691,18 +691,18 @@ class _ComingSoonCard extends StatelessWidget {
                     'AI Conversations',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                         ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Coming soon!',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.lock, size: 20, color: Colors.grey[400]),
+            Icon(Icons.lock, size: 20, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
           ],
         ),
       ),
@@ -736,10 +736,10 @@ class _MenuButton extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: const Color(0xFF8b6f47), size: 28),
+                child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 28),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -750,14 +750,14 @@ class _MenuButton extends StatelessWidget {
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF8b6f47),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey[600],
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                           ),
                     ),
                   ],
@@ -818,14 +818,14 @@ class _StudyModeBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: const Color(0xFF8b6f47), size: 24),
+              Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF8b6f47),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
@@ -837,7 +837,7 @@ class _StudyModeBottomSheet extends StatelessWidget {
             icon: Icons.add_circle_outline,
             title: 'Study New',
             subtitle: '$newCount items available',
-            color: const Color(0xFF8b6f47),
+            color: Theme.of(context).colorScheme.primary,
             enabled: newCount > 0,
             onTap: () {
               Navigator.pop(context);
@@ -957,7 +957,7 @@ class _ModeOption extends StatelessWidget {
                         subtitle,
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                         ),
                       ),
                     ],

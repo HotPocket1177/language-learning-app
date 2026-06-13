@@ -257,7 +257,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                     Text(
                                       '$selectedCategory',
                                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: const Color(0xFF8b6f47),
+                                            color: Theme.of(context).colorScheme.primary,
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
@@ -294,7 +294,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].romaji,
                                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                                      color: Colors.grey[600],
+                                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                                     ),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -302,7 +302,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].english,
                                                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                                      color: const Color(0xFF8b6f47),
+                                                      color: Theme.of(context).colorScheme.primary,
                                                       fontWeight: FontWeight.bold,
                                                     ),
                                                 textAlign: TextAlign.center,
@@ -319,7 +319,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].romaji,
                                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                                      color: Colors.grey[600],
+                                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                                                     ),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -330,7 +330,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                                   ? 'Tap to hide translation'
                                                   : 'Tap to show translation',
                                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                    color: Colors.grey,
+                                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                                     fontStyle: FontStyle.italic,
                                                   ),
                                             ),

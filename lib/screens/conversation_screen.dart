@@ -185,12 +185,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
               children: [
                 Image.asset('assets/images/kuma.png', width: 28, height: 28),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Try saying:',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF8b6f47),
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -236,7 +236,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             '${hint.romaji}  •  ${hint.english}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                             ),
                           ),
                         ],
@@ -317,9 +317,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           : accuracy >= 50
                               ? "Nice effort! You're improving! 頑張って!"
                               : "Keep practicing! You'll get better! 大丈夫!",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF8b6f47),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -559,7 +559,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     tooltip: '${s.romaji} — ${s.english}',
                     backgroundColor: const Color(0xFFF5EBE0),
                     side: BorderSide(
-                      color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                     ),
                     onPressed: () {
                       _textController.text = s.japanese;
@@ -616,12 +616,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           decoration: InputDecoration(
                             hintText: 'Type your message...',
                             hintStyle: TextStyle(
-                              color: Colors.grey[500],
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                               fontSize: 14,
                             ),
                             counterText: '',
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).colorScheme.surface,
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 14, vertical: 10),
                             border: OutlineInputBorder(
@@ -637,8 +637,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF8b6f47),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
                                 width: 1.5,
                               ),
                             ),
@@ -648,7 +648,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       const SizedBox(width: 4),
                       IconButton(
                         icon: const Icon(Icons.send_rounded),
-                        color: const Color(0xFF8b6f47),
+                        color: Theme.of(context).colorScheme.primary,
                         onPressed: () => _sendMessage(),
                       ),
                     ],
@@ -670,7 +670,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
                 ),
               ),
@@ -702,10 +702,10 @@ class _StatRow extends StatelessWidget {
         const Spacer(),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF8b6f47),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ],

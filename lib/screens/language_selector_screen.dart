@@ -18,10 +18,10 @@ class LanguageSelectorScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
+              Icon(
                 Icons.language,
                 size: 80,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 24),
               Text(
@@ -34,7 +34,7 @@ class LanguageSelectorScreen extends StatelessWidget {
                 'Select the language you want to learn',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: const Color(0xFF8b6f47).withValues(alpha: 0.7),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 48),
@@ -94,7 +94,7 @@ class _LanguageCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -109,7 +109,7 @@ class _LanguageCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8b6f47).withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -126,10 +126,10 @@ class _LanguageCard extends StatelessWidget {
                   children: [
                     Text(
                       language.displayName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF8b6f47),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -146,9 +146,9 @@ class _LanguageCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
-                color: Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
                 size: 24,
               ),
             ],

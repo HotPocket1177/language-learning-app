@@ -45,7 +45,7 @@ class StatsScreen extends StatelessWidget {
                           icon: Icons.calendar_month,
                           label: 'Days since starting',
                           value: _daysSinceStart(provider.studyDates),
-                          color: const Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         const Divider(height: 24),
                         _SummaryRow(
@@ -80,7 +80,7 @@ class StatsScreen extends StatelessWidget {
                           icon: Icons.star,
                           label: 'Current level',
                           value: '${stats.level}',
-                          color: const Color(0xFF8b6f47),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ],
                     ),
@@ -213,7 +213,7 @@ class _SectionHeader extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF8b6f47),
+                color: Theme.of(context).colorScheme.primary,
               ),
         ),
       ],
@@ -322,7 +322,7 @@ class _ProgressBar extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           '${(pct * 100).toStringAsFixed(0)}% complete',
-          style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+          style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
       ],
     );
@@ -355,7 +355,7 @@ class _CategoryBreakdown extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Text(
             'Start studying to see your category breakdown!',
-            style: TextStyle(color: Colors.grey[500]),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
             textAlign: TextAlign.center,
           ),
         ),
@@ -474,6 +474,10 @@ class _StudyHeatmap extends StatelessWidget {
                   painter: _MonthLabelPainter(
                     monthLabels: monthLabels,
                     weeks: weeks,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -492,7 +496,7 @@ class _StudyHeatmap extends StatelessWidget {
                   width: 16,
                   child: Text(
                     dayLabels[i],
-                    style: TextStyle(fontSize: 9, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                 );
               }),
@@ -519,7 +523,7 @@ class _StudyHeatmap extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('Less', style: TextStyle(fontSize: 10, color: Colors.grey[500])),
+            Text('Less', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
             const SizedBox(width: 4),
             _legendBox(Colors.grey[200]!),
             _legendBox(const Color(0xFFC8E6C9)),
@@ -527,7 +531,7 @@ class _StudyHeatmap extends StatelessWidget {
             _legendBox(const Color(0xFF4CAF50)),
             _legendBox(const Color(0xFF2E7D32)),
             const SizedBox(width: 4),
-            Text('More', style: TextStyle(fontSize: 10, color: Colors.grey[500])),
+            Text('More', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
           ],
         ),
       ],
@@ -558,13 +562,15 @@ class _StudyHeatmap extends StatelessWidget {
 class _MonthLabelPainter extends CustomPainter {
   final Map<int, String> monthLabels;
   final int weeks;
+  final Color color;
 
-  _MonthLabelPainter({required this.monthLabels, required this.weeks});
+  _MonthLabelPainter(
+      {required this.monthLabels, required this.weeks, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final cellWidth = size.width / weeks;
-    final textStyle = TextStyle(fontSize: 10, color: Colors.grey[500]);
+    final textStyle = TextStyle(fontSize: 10, color: color);
 
     for (final entry in monthLabels.entries) {
       final tp = TextPainter(
