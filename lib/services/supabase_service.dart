@@ -9,7 +9,7 @@ class SupabaseService {
     try {
       await Supabase.initialize(
         url: SupabaseConfig.supabaseUrl,
-        anonKey: SupabaseConfig.supabaseAnonKey,
+        publishableKey: SupabaseConfig.supabaseAnonKey,
       );
       _client = Supabase.instance.client;
     } catch (e) {
