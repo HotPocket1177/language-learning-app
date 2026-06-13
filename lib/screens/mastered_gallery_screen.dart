@@ -167,10 +167,10 @@ class _VocabularyListTile extends StatelessWidget {
                     // Japanese text (large)
                     Text(
                       item.japanese,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2d2d2d),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -510,10 +510,10 @@ class _SentenceListTile extends StatelessWidget {
                     // Japanese text
                     Text(
                       item.japanese,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2d2d2d),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),

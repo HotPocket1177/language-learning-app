@@ -475,7 +475,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 style: TextStyle(
                                   fontSize: isVocabulary ? 48 : 28,
                                   fontWeight: FontWeight.bold,
-                                  color: const Color(0xFF2d2d2d),
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

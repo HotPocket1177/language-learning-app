@@ -35,7 +35,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: seed,
         brightness: Brightness.light,
-        surface: BrandColors.cream,
+        surface: BrandColors.lightSurface, // white cards; scaffold stays cream
       ),
       fontFamily: 'serif',
       appBarTheme: const AppBarTheme(
