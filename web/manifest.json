@@ -1,11 +1,11 @@
 {
-    "name": "japanese_study_app",
-    "short_name": "japanese_study_app",
+    "name": "Language Study App",
+    "short_name": "Study App",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F5EBE0",
+    "theme_color": "#8b6f47",
+    "description": "A cozy language-learning companion with Kuma-san, your study bear.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

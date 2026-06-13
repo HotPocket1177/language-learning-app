@@ -1,5 +1,5 @@
 name: japanese_study_app
-description: "A new Flutter project."
+description: "Language Study App — a cozy language-learning companion with Kuma-san, your study bear."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -33,12 +33,12 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
   provider: ^6.1.1
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.5
 
   # Supabase
-  supabase_flutter: ^2.8.0
+  supabase_flutter: ^2.14.2
 
   # Used by claude_api_service.dart (AI features — currently disabled in UI)
   http: ^1.1.0

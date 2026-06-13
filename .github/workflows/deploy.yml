@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow the workflow to publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one deploy at a time; let an in-progress run finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.5'
+          channel: stable
+          cache: true
+
+      # supabase_config.dart and api_keys.dart are git-ignored, so they must be
+      # recreated here. The Claude key is left empty on purpose (AI mode stays
+      # disabled on the public web build); Supabase values come from repo secrets
+      # (Settings -> Secrets and variables -> Actions). The anon key is safe to be
+      # public only if Row Level Security is enabled on your tables.
+      - name: Generate config files
+        run: |
+          mkdir -p lib/config
+          cat > lib/config/api_keys.dart <<'EOF'
+          class ApiKeys {
+            static const String claudeApiKey = '';
+          }
+          EOF
+          cat > lib/supabase_config.dart <<EOF
+          class SupabaseConfig {
+            static const String supabaseUrl = '${{ secrets.SUPABASE_URL }}';
+            static const String supabaseAnonKey = '${{ secrets.SUPABASE_ANON_KEY }}';
+          }
+          EOF
+
+      # The repo is served from a subpath, so the base href must match it.
+      # If you rename the repo or use a custom domain, update --base-href.
+      - name: Build web
+        run: |
+          flutter pub get
+          flutter build web --release --base-href "/language-learning-app/"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
