@@ -123,7 +123,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EBE0),
       appBar: AppBar(
         title: const Text('Sign In'),
         backgroundColor: const Color(0xFF8b6f47),

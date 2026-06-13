@@ -11,7 +11,6 @@ class LanguageSelectorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EBE0),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -138,7 +137,10 @@ class _LanguageCard extends StatelessWidget {
                       language.nativeName,
                       style: TextStyle(
                         fontSize: 16,
-                        color: const Color(0xFF4a4a4a).withValues(alpha: 0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.7),
                       ),
                     ),
                   ],

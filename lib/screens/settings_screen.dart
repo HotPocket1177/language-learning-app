@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/user_settings.dart';
 import '../services/kuma_service.dart';
 import 'tutorial_screen.dart';
@@ -95,6 +96,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                _buildSectionHeader('Appearance'),
+                _buildCard([_buildThemeSelector()]),
+                const SizedBox(height: 24),
                 _buildSectionHeader('Study Settings'),
                 _buildCard([
                   _buildSliderTile(
@@ -282,6 +286,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 32),
               ],
             ),
+    );
+  }
+
+  Widget _buildThemeSelector() {
+    final themeProvider = context.watch<ThemeProvider>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Theme',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<ThemeMode>(
+              segments: const [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  label: Text('System'),
+                  icon: Icon(Icons.brightness_auto),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  label: Text('Light'),
+                  icon: Icon(Icons.light_mode),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  label: Text('Dark'),
+                  icon: Icon(Icons.dark_mode),
+                ),
+              ],
+              selected: {themeProvider.mode},
+              showSelectedIcon: false,
+              onSelectionChanged: (selection) {
+                themeProvider.setMode(selection.first);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'providers/study_provider.dart';
+import 'providers/theme_provider.dart';
+import 'theme/app_theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/language_selector_screen.dart';
 import 'screens/tutorial_screen.dart';
@@ -29,70 +31,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => StudyProvider(),
-      child: MaterialApp(
-        title: 'Language Study App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: const Color(0xFF8b6f47),
-          scaffoldBackgroundColor: const Color(0xFFF5EBE0),
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF8b6f47),
-            surface: const Color(0xFFF5EBE0),
-          ),
-          fontFamily: 'serif',
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF8b6f47),
-            foregroundColor: Colors.white,
-            elevation: 2,
-          ),
-          cardTheme: CardThemeData(
-            color: Colors.white,
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                color: const Color(0xFF8b6f47).withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8b6f47),
-              foregroundColor: Colors.white,
-              elevation: 2,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
-          textTheme: const TextTheme(
-            headlineLarge: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8b6f47),
-            ),
-            headlineMedium: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF8b6f47),
-            ),
-            bodyLarge: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF4a4a4a),
-            ),
-          ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => StudyProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()..load()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) => MaterialApp(
+          title: 'Language Study App',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          themeMode: themeProvider.mode,
+          routes: {
+            '/home': (context) => const HomeScreen(),
+            '/tutorial': (context) => const TutorialScreen(),
+            '/language-selector': (context) => const LanguageSelectorScreen(),
+            '/welcome': (context) => const WelcomeScreen(),
+          },
+          home: const AuthGate(),
         ),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/tutorial': (context) => const TutorialScreen(),
-          '/language-selector': (context) => const LanguageSelectorScreen(),
-          '/welcome': (context) => const WelcomeScreen(),
-        },
-        home: const AuthGate(),
       ),
     );
   }
@@ -202,20 +160,20 @@ class _AppInitializerState extends State<AppInitializer> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: Color(0xFFF5EBE0),
+      final primary = Theme.of(context).colorScheme.primary;
+      return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+                valueColor: AlwaysStoppedAnimation<Color>(primary),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 'Loading your progress...',
                 style: TextStyle(
-                  color: Color(0xFF8b6f47),
+                  color: primary,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

@@ -87,7 +87,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EBE0),
       appBar: AppBar(
         title: const Text('Create Account'),
         backgroundColor: const Color(0xFF8b6f47),

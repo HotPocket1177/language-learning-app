@@ -48,7 +48,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final welcomeMsg = kumaService.welcomeMessage;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5EBE0),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
