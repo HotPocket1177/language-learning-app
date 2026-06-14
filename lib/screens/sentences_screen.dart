@@ -165,8 +165,8 @@ class _SentencesScreenState extends State<SentencesScreen> {
                               });
                             }
                           },
-                          selectedColor: const Color(0xFF8b6f47).withValues(alpha: 0.3),
-                          backgroundColor: Colors.grey[200],
+                          selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                         );
                       }).toList(),
                     ),

@@ -669,15 +669,17 @@ class _ChatBubbleRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isKuma
-                ? const Color(0xFF8b6f47).withValues(alpha: 0.1)
-                : const Color(0xFF8b6f47).withValues(alpha: 0.8),
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.18)
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             text,
             style: TextStyle(
               fontSize: 14,
-              color: isKuma ? const Color(0xFF4a4a4a) : Colors.white,
+              color: isKuma
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Colors.white,
             ),
           ),
         ),
