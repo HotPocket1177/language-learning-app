@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/achievement.dart';
 import '../providers/study_provider.dart';
 import '../services/achievement_service.dart';
+import '../theme/app_theme.dart';
 
 class AchievementsScreen extends StatefulWidget {
   const AchievementsScreen({super.key});
@@ -63,7 +64,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
                                     .headlineMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: context.accent,
                                     ),
                               ),
                               const SizedBox(height: 4),
@@ -77,7 +78,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
                                 child: LinearProgressIndicator(
                                   value: total > 0 ? unlocked / total : 0,
                                   minHeight: 10,
-                                  backgroundColor: Colors.grey[300],
+                                  backgroundColor: context.track,
                                   valueColor:
                                       const AlwaysStoppedAnimation<Color>(
                                           Color(0xFFFFD700)),
@@ -112,13 +113,13 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
       children: [
         Row(
           children: [
-            Icon(category.icon, size: 20, color: const Color(0xFF8b6f47)),
+            Icon(category.icon, size: 20, color: context.accent),
             const SizedBox(width: 8),
             Text(
               category.displayName,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
             ),
           ],
@@ -168,13 +169,13 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               decoration: BoxDecoration(
                 color: unlocked
                     ? achievement.color.withValues(alpha: 0.15)
-                    : Colors.grey[200],
+                    : context.accentSoft,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 isHiddenLocked ? Icons.help_outline : achievement.icon,
                 size: 48,
-                color: unlocked ? achievement.color : Colors.grey[400],
+                color: unlocked ? achievement.color : context.textFaint,
               ),
             ),
             const SizedBox(height: 16),
@@ -182,7 +183,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               isHiddenLocked ? '???' : achievement.title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
             ),
             if (!isHiddenLocked) ...[
@@ -190,7 +191,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               Text(
                 achievement.titleJp,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                      color: context.textSecondary,
                     ),
               ),
             ],
@@ -207,7 +208,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
               Text(
                 'Unlocked ${_formatDate(_achievementService.unlockedAt(achievement.id)!)}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      color: context.textSecondary,
                     ),
               ),
             ],
@@ -267,13 +268,13 @@ class _AchievementCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: unlocked
                       ? achievement.color.withValues(alpha: 0.15)
-                      : Colors.grey[200],
+                      : context.accentSoft,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isHiddenLocked ? Icons.help_outline : achievement.icon,
                   size: 32,
-                  color: unlocked ? achievement.color : Colors.grey[400],
+                  color: unlocked ? achievement.color : context.textFaint,
                 ),
               ),
               const SizedBox(height: 10),
@@ -283,7 +284,7 @@ class _AchievementCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: unlocked ? const Color(0xFF8b6f47) : Colors.grey[500],
+                  color: unlocked ? context.accent : context.textFaint,
                 ),
               ),
               const SizedBox(height: 4),
@@ -293,7 +294,7 @@ class _AchievementCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 11,
-                    color: unlocked ? Colors.grey[600] : Colors.grey[400],
+                    color: unlocked ? context.textSecondary : context.textFaint,
                   ),
                 ),
               const Spacer(),
@@ -303,7 +304,7 @@ class _AchievementCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 6,
-                    backgroundColor: Colors.grey[300],
+                    backgroundColor: context.track,
                     valueColor: AlwaysStoppedAnimation<Color>(
                         achievement.color.withValues(alpha: 0.6)),
                   ),
@@ -311,7 +312,7 @@ class _AchievementCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   progressText,
-                  style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                  style: TextStyle(fontSize: 10, color: context.textSecondary),
                 ),
               ],
               if (unlocked)

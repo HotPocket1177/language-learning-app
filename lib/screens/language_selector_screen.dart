@@ -4,6 +4,7 @@ import '../models/language_content.dart';
 import '../providers/study_provider.dart';
 import '../services/kuma_service.dart';
 import 'tutorial_screen.dart';
+import '../theme/app_theme.dart';
 
 class LanguageSelectorScreen extends StatelessWidget {
   const LanguageSelectorScreen({super.key});
@@ -21,7 +22,7 @@ class LanguageSelectorScreen extends StatelessWidget {
               Icon(
                 Icons.language,
                 size: 80,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
               const SizedBox(height: 24),
               Text(
@@ -34,7 +35,7 @@ class LanguageSelectorScreen extends StatelessWidget {
                 'Select the language you want to learn',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                  color: context.accent.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 48),
@@ -94,7 +95,7 @@ class _LanguageCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          color: context.accent.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -109,7 +110,7 @@ class _LanguageCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  color: context.accentSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -129,7 +130,7 @@ class _LanguageCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -137,10 +138,7 @@ class _LanguageCard extends StatelessWidget {
                       language.nativeName,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.7),
+                        color: context.textSecondary,
                       ),
                     ),
                   ],
@@ -148,7 +146,7 @@ class _LanguageCard extends StatelessWidget {
               ),
               Icon(
                 Icons.arrow_forward_ios,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
                 size: 24,
               ),
             ],

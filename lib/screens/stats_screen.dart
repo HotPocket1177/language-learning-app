@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
+import '../theme/app_theme.dart';
 
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
@@ -45,7 +46,7 @@ class StatsScreen extends StatelessWidget {
                           icon: Icons.calendar_month,
                           label: 'Days since starting',
                           value: _daysSinceStart(provider.studyDates),
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                         ),
                         const Divider(height: 24),
                         _SummaryRow(
@@ -80,7 +81,7 @@ class StatsScreen extends StatelessWidget {
                           icon: Icons.star,
                           label: 'Current level',
                           value: '${stats.level}',
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                         ),
                       ],
                     ),
@@ -207,13 +208,13 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: const Color(0xFF8b6f47)),
+        Icon(icon, size: 20, color: context.accent),
         const SizedBox(width: 8),
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
         ),
       ],
@@ -315,14 +316,14 @@ class _ProgressBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: pct,
             minHeight: 12,
-            backgroundColor: Colors.grey[300],
+            backgroundColor: context.track,
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           '${(pct * 100).toStringAsFixed(0)}% complete',
-          style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+          style: TextStyle(fontSize: 11, color: context.textSecondary),
         ),
       ],
     );
@@ -355,7 +356,7 @@ class _CategoryBreakdown extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Text(
             'Start studying to see your category breakdown!',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+            style: TextStyle(color: context.textSecondary),
             textAlign: TextAlign.center,
           ),
         ),
@@ -403,7 +404,7 @@ class _CategoryBreakdown extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: pct,
                     minHeight: 16,
-                    backgroundColor: Colors.grey[200],
+                    backgroundColor: context.track,
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                   ),
                 ),
@@ -474,10 +475,7 @@ class _StudyHeatmap extends StatelessWidget {
                   painter: _MonthLabelPainter(
                     monthLabels: monthLabels,
                     weeks: weeks,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.6),
+                    color: context.textSecondary,
                   ),
                 ),
               ),
@@ -496,7 +494,7 @@ class _StudyHeatmap extends StatelessWidget {
                   width: 16,
                   child: Text(
                     dayLabels[i],
-                    style: TextStyle(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(fontSize: 9, color: context.textSecondary),
                   ),
                 );
               }),
@@ -512,6 +510,7 @@ class _StudyHeatmap extends StatelessWidget {
                     today: today,
                     studyDates: dateSet,
                     weeks: weeks,
+                    emptyColor: context.track,
                   ),
                 ),
               ),
@@ -523,15 +522,15 @@ class _StudyHeatmap extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('Less', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+            Text('Less', style: TextStyle(fontSize: 10, color: context.textSecondary)),
             const SizedBox(width: 4),
-            _legendBox(Colors.grey[200]!),
+            _legendBox(context.track),
             _legendBox(const Color(0xFFC8E6C9)),
             _legendBox(const Color(0xFF81C784)),
             _legendBox(const Color(0xFF4CAF50)),
             _legendBox(const Color(0xFF2E7D32)),
             const SizedBox(width: 4),
-            Text('More', style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))),
+            Text('More', style: TextStyle(fontSize: 10, color: context.textSecondary)),
           ],
         ),
       ],
@@ -590,12 +589,14 @@ class _HeatmapPainter extends CustomPainter {
   final DateTime today;
   final Set<String> studyDates;
   final int weeks;
+  final Color emptyColor;
 
   _HeatmapPainter({
     required this.startDate,
     required this.today,
     required this.studyDates,
     required this.weeks,
+    required this.emptyColor,
   });
 
   @override
@@ -612,7 +613,7 @@ class _HeatmapPainter extends CustomPainter {
         final dateStr = date.toIso8601String().substring(0, 10);
         final studied = studyDates.contains(dateStr);
 
-        final color = studied ? const Color(0xFF4CAF50) : Colors.grey[200]!;
+        final color = studied ? const Color(0xFF4CAF50) : emptyColor;
 
         final rect = RRect.fromRectAndRadius(
           Rect.fromLTWH(w * cellW + 1, d * cellH + 1, cellW - 2, cellH - 2),

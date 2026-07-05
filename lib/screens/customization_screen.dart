@@ -4,6 +4,7 @@ import '../models/kuma_outfit.dart';
 import '../models/user_stats.dart';
 import '../providers/study_provider.dart';
 import '../services/cosmetics_service.dart';
+import '../theme/app_theme.dart';
 
 class CustomizationScreen extends StatefulWidget {
   const CustomizationScreen({super.key});
@@ -106,7 +107,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                 ),
               ),
               if (hasActiveSeasonal) ...[
@@ -152,7 +153,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+            color: context.accent,
           ),
         ),
         const SizedBox(height: 8),
@@ -185,7 +186,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
             ),
             const SizedBox(height: 12),
@@ -200,7 +201,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
             ),
             Text(
               current.description,
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
+              style: TextStyle(color: context.textSecondary),
             ),
           ],
         ),
@@ -221,14 +222,14 @@ class _CustomizationScreenState extends State<CustomizationScreen>
           : null,
       child: Card(
         color: isSelected
-            ? const Color(0xFF8b6f47).withValues(alpha: 0.1)
+            ? context.accentSoft
             : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
             color: isSelected
-                ? const Color(0xFF8b6f47)
-                : Colors.grey.withValues(alpha: 0.3),
+                ? context.accent
+                : context.track,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -253,7 +254,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                       child: Container(
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -271,7 +272,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  color: isUnlocked ? null : Colors.grey,
+                  color: isUnlocked ? null : context.textFaint,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
@@ -284,7 +285,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                     : _cosmetics.getOutfitUnlockHint(outfit),
                 style: TextStyle(
                   fontSize: 11,
-                  color: isUnlocked ? Colors.grey[600] : Colors.orange[700],
+                  color: isUnlocked ? context.textSecondary : Colors.orange[700],
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -306,7 +307,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
       errorBuilder: (_, _, _) => Icon(
         Icons.pets,
         size: size * 0.6,
-        color: Theme.of(context).colorScheme.primary,
+        color: context.accent,
       ),
     );
   }
@@ -346,7 +347,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.accent,
             ),
           ),
           const SizedBox(height: 8),
@@ -361,7 +362,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
+              color: context.accent,
             ),
           ),
           const SizedBox(height: 8),
@@ -383,7 +384,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
             ),
             const SizedBox(height: 12),
@@ -417,14 +418,14 @@ class _CustomizationScreenState extends State<CustomizationScreen>
             : null,
         child: Card(
           color: isSelected
-              ? const Color(0xFF8b6f47).withValues(alpha: 0.1)
+              ? context.accentSoft
               : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
               color: isSelected
-                  ? const Color(0xFF8b6f47)
-                  : Colors.grey.withValues(alpha: 0.3),
+                  ? context.accent
+                  : context.track,
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -449,7 +450,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: isUnlocked ? null : Colors.grey,
+                              color: isUnlocked ? null : context.textFaint,
                             ),
                           ),
                           if (isSelected) ...[
@@ -457,7 +458,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                             Icon(
                               Icons.check_circle,
                               size: 18,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: context.accent,
                             ),
                           ],
                         ],
@@ -470,7 +471,7 @@ class _CustomizationScreenState extends State<CustomizationScreen>
                         style: TextStyle(
                           fontSize: 12,
                           color: isUnlocked
-                              ? Colors.grey[600]
+                              ? context.textSecondary
                               : Colors.orange[700],
                         ),
                       ),

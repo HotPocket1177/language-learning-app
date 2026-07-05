@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 /// Dark overlay with an animated spotlight cutout for the tutorial.
 class TutorialOverlay extends StatefulWidget {
@@ -157,8 +158,8 @@ class TutorialProgressDots extends StatelessWidget {
           height: 8,
           decoration: BoxDecoration(
             color: isActive
-                ? const Color(0xFF8b6f47)
-                : const Color(0xFF8b6f47).withValues(alpha: 0.3),
+                ? context.accent
+                : context.accent.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(4),
           ),
         );

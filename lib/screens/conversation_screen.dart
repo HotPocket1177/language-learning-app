@@ -7,6 +7,7 @@ import '../services/claude_api_service.dart';
 import '../services/conversation_service.dart';
 import '../utils/romaji_converter.dart';
 import '../widgets/message_bubble.dart';
+import '../theme/app_theme.dart';
 
 class ConversationScreen extends StatefulWidget {
   final ConversationTopic topic;
@@ -164,8 +165,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -176,7 +177,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: context.track,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -190,7 +191,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
                 ),
               ],
@@ -213,11 +214,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5EBE0),
+                        color: context.accentSoft,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF8b6f47)
-                              .withValues(alpha: 0.15),
+                          color: context.accent.withValues(alpha: 0.15),
                         ),
                       ),
                       child: Column(
@@ -225,10 +225,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         children: [
                           Text(
                             hint.japanese,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF3a2a1a),
+                              color: context.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 3),
@@ -236,7 +236,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             '${hint.romaji}  •  ${hint.english}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
@@ -302,7 +302,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5EBE0),
+                color: context.accentSoft,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -319,7 +319,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               : "Keep practicing! You'll get better! 大丈夫!",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                       ),
                     ),
                   ),
@@ -371,10 +371,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF8b6f47),
-              foregroundColor: Colors.white,
-            ),
             child: const Text('Done'),
           ),
         ],
@@ -553,14 +549,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   return ActionChip(
                     label: Text(
                       s.japanese,
-                      style: const TextStyle(
-                          fontSize: 13, color: Color(0xFF3a2a1a)),
+                      style: const TextStyle(fontSize: 13),
                     ),
                     tooltip: '${s.romaji} — ${s.english}',
-                    backgroundColor: const Color(0xFFF5EBE0),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                    ),
                     onPressed: () {
                       _textController.text = s.japanese;
                       _textController.selection = TextSelection.fromPosition(
@@ -577,7 +568,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           if (!_service.isEnded)
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFF5EBE0),
+                color: context.surface,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -616,12 +607,12 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           decoration: InputDecoration(
                             hintText: 'Type your message...',
                             hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: context.textSecondary,
                               fontSize: 14,
                             ),
                             counterText: '',
                             filled: true,
-                            fillColor: Theme.of(context).colorScheme.surface,
+                            fillColor: context.surface,
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 14, vertical: 10),
                             border: OutlineInputBorder(
@@ -631,14 +622,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: BorderSide(
-                                color: const Color(0xFF8b6f47)
+                                color: context.accent
                                     .withValues(alpha: 0.2),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: context.accent,
                                 width: 1.5,
                               ),
                             ),
@@ -648,7 +639,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       const SizedBox(width: 4),
                       IconButton(
                         icon: const Icon(Icons.send_rounded),
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         onPressed: () => _sendMessage(),
                       ),
                     ],
@@ -661,7 +652,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           if (_service.isEnded && !_isTyping)
             Container(
               padding: const EdgeInsets.all(16),
-              color: const Color(0xFFF5EBE0),
+              color: context.surface,
               child: SafeArea(
                 top: false,
                 child: Text(
@@ -670,7 +661,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                    color: context.textSecondary,
                   ),
                 ),
               ),
@@ -696,7 +687,7 @@ class _StatRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: const Color(0xFF8b6f47)),
+        Icon(icon, size: 20, color: context.accent),
         const SizedBox(width: 8),
         Text(label, style: const TextStyle(fontSize: 14)),
         const Spacer(),
@@ -705,7 +696,7 @@ class _StatRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
+            color: context.accent,
           ),
         ),
       ],

@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import '../../services/kuma_service.dart';
 import '../../widgets/kuma_mascot.dart';
 import '../../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
+import '../../theme/app_theme.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -75,11 +76,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                     letterSpacing: -0.5,
                     shadows: [
                       Shadow(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        color: context.accentSoft,
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -94,7 +95,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    color: context.accent.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.3,
                   ),
@@ -145,10 +146,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           );
                         },
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF8b6f47),
+                    foregroundColor: context.accent,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.accent,
                       width: 2.5,
                     ),
                     shape: RoundedRectangleBorder(
@@ -171,7 +172,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   children: [
                     Expanded(
                       child: Divider(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                        color: context.accent.withValues(alpha: 0.25),
                         thickness: 1.5,
                       ),
                     ),
@@ -180,7 +181,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       child: Text(
                         'OR',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                          color: context.accent.withValues(alpha: 0.5),
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           letterSpacing: 1.5,
@@ -189,7 +190,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     Expanded(
                       child: Divider(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                        color: context.accent.withValues(alpha: 0.25),
                         thickness: 1.5,
                       ),
                     ),
@@ -204,12 +205,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFF8b6f47),
-                            ),
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2.5),
                         )
                       : const Icon(
                           Icons.person_outline_rounded,
@@ -223,7 +219,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF8b6f47),
+                    foregroundColor: context.accent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),
@@ -234,7 +230,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   'Your progress will sync across devices',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                    color: context.accent.withValues(alpha: 0.5),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),

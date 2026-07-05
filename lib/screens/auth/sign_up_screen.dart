@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/study_provider.dart';
 import '../../services/auth_service.dart';
 import '../language_selector_screen.dart';
+import '../../theme/app_theme.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -89,8 +90,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Account'),
-        backgroundColor: const Color(0xFF8b6f47),
-        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: SafeArea(
@@ -110,10 +109,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                     shadows: [
                       Shadow(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        color: context.accentSoft,
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -126,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    color: context.accent.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -143,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hintText: 'Your name',
                     prefixIcon: const Icon(Icons.person_outline_rounded),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -151,14 +150,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -193,7 +192,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hintText: 'your.email@example.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -201,14 +200,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -253,7 +252,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -261,14 +260,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -315,7 +314,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -323,14 +322,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -395,7 +394,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(
                       'Already have an account? ',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                        color: context.accent.withValues(alpha: 0.7),
                         fontSize: 15,
                       ),
                     ),
@@ -412,7 +411,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: Text(
                         'Sign In',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
@@ -427,7 +426,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   'By creating an account, you agree to our\nTerms of Service and Privacy Policy',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.45),
+                    color: context.accent.withValues(alpha: 0.45),
                     fontSize: 12,
                     height: 1.4,
                   ),

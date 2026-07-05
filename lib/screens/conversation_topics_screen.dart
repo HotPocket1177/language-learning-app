@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/conversation_data.dart';
 import 'conversation_screen.dart';
 import 'conversation_history_screen.dart';
+import '../theme/app_theme.dart';
 
 class ConversationTopicsScreen extends StatelessWidget {
   const ConversationTopicsScreen({super.key});
@@ -33,7 +34,7 @@ class ConversationTopicsScreen extends StatelessWidget {
             Text(
               'Choose a topic',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -41,7 +42,7 @@ class ConversationTopicsScreen extends StatelessWidget {
             Text(
               'Practice conversations with Kuma-san!',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                    color: context.textSecondary,
                   ),
             ),
             const SizedBox(height: 20),
@@ -90,7 +91,7 @@ class _TopicCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+          color: context.accent.withValues(alpha: 0.2),
         ),
       ),
       child: InkWell(
@@ -111,7 +112,7 @@ class _TopicCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -122,7 +123,7 @@ class _TopicCard extends StatelessWidget {
                 topic.subtitle,
                 style: TextStyle(
                   fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                  color: context.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -136,7 +137,7 @@ class _TopicCard extends StatelessWidget {
                     size: 14,
                     color: i < topic.difficulty
                         ? const Color(0xFFd4a574)
-                        : Colors.grey[400],
+                        : context.textFaint,
                   );
                 }),
               ),

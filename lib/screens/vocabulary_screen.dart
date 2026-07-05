@@ -6,6 +6,7 @@ import '../models/kuma_message.dart';
 import '../services/kuma_service.dart';
 import '../widgets/kuma_mascot.dart';
 import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
+import '../theme/app_theme.dart';
 
 class VocabularyScreen extends StatefulWidget {
   const VocabularyScreen({super.key});
@@ -181,7 +182,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    color: Theme.of(context).colorScheme.surface,
+                    color: context.surface,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -208,8 +209,6 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                   });
                                 }
                               },
-                              selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                              backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                             );
                           }).toList(),
                         ),
@@ -257,7 +256,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                     Text(
                                       '$selectedCategory',
                                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                            color: Theme.of(context).colorScheme.primary,
+                                            color: context.accent,
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
@@ -294,7 +293,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].romaji,
                                                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                                                      color: context.textSecondary,
                                                     ),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -302,7 +301,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].english,
                                                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                                      color: Theme.of(context).colorScheme.primary,
+                                                      color: context.accent,
                                                       fontWeight: FontWeight.bold,
                                                     ),
                                                 textAlign: TextAlign.center,
@@ -319,7 +318,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                               Text(
                                                 currentList[currentIndex].romaji,
                                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                                                      color: context.textSecondary,
                                                     ),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -330,7 +329,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                                   ? 'Tap to hide translation'
                                                   : 'Tap to show translation',
                                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                                    color: context.textSecondary,
                                                     fontStyle: FontStyle.italic,
                                                   ),
                                             ),

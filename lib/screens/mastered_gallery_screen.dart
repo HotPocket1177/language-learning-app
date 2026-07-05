@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
+import '../theme/app_theme.dart';
 
 class MasteredGalleryScreen extends StatefulWidget {
   const MasteredGalleryScreen({super.key});
@@ -36,7 +37,7 @@ class _MasteredGalleryScreenState extends State<MasteredGalleryScreen>
           preferredSize: const Size.fromHeight(56),
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: context.accentSoft,
             ),
             child: TabBar(
               controller: _tabController,
@@ -153,7 +154,7 @@ class _VocabularyListTile extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: context.accentSoft,
               ),
             ),
           ),
@@ -170,7 +171,7 @@ class _VocabularyListTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -179,7 +180,7 @@ class _VocabularyListTile extends StatelessWidget {
                       item.romaji,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                        color: context.textSecondary,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -189,7 +190,7 @@ class _VocabularyListTile extends StatelessWidget {
                       item.english,
                       style: TextStyle(
                         fontSize: 15,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -207,14 +208,14 @@ class _VocabularyListTile extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                      color: context.accentSoft,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       item.category,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -231,7 +232,7 @@ class _VocabularyListTile extends StatelessWidget {
                           child: Icon(
                             Icons.note,
                             size: 18,
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                            color: context.accent.withValues(alpha: 0.6),
                           ),
                         ),
                       // Delete button
@@ -326,7 +327,7 @@ class _VocabularyListTile extends StatelessWidget {
               item.romaji,
               style: TextStyle(
                 fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                color: context.textSecondary,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -340,7 +341,7 @@ class _VocabularyListTile extends StatelessWidget {
                 item.english,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -349,14 +350,14 @@ class _VocabularyListTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  color: context.accentSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   item.category,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
                 ),
               ),
@@ -384,7 +385,7 @@ class _VocabularyListTile extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.accent,
                       width: 2,
                     ),
                   ),
@@ -496,7 +497,7 @@ class _SentenceListTile extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                color: context.accentSoft,
               ),
             ),
           ),
@@ -513,7 +514,7 @@ class _SentenceListTile extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -522,7 +523,7 @@ class _SentenceListTile extends StatelessWidget {
                       item.romaji,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                        color: context.textSecondary,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -532,7 +533,7 @@ class _SentenceListTile extends StatelessWidget {
                       item.english,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -551,14 +552,14 @@ class _SentenceListTile extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                      color: context.accentSoft,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       item.category,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -575,7 +576,7 @@ class _SentenceListTile extends StatelessWidget {
                           child: Icon(
                             Icons.note,
                             size: 18,
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                            color: context.accent.withValues(alpha: 0.6),
                           ),
                         ),
                       // Delete button
@@ -680,7 +681,7 @@ class _SentenceListTile extends StatelessWidget {
                 item.romaji,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                  color: context.textSecondary,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -690,7 +691,7 @@ class _SentenceListTile extends StatelessWidget {
                 item.english,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -699,14 +700,14 @@ class _SentenceListTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  color: context.accentSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   item.category,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
                 ),
               ),
@@ -731,7 +732,7 @@ class _SentenceListTile extends StatelessWidget {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.accent,
                       width: 2,
                     ),
                   ),
@@ -814,13 +815,13 @@ class _EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              color: context.accent.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -828,7 +829,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               subtitle,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                    color: context.textSecondary,
                   ),
               textAlign: TextAlign.center,
             ),

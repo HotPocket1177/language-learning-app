@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/conversation_service.dart';
+import '../theme/app_theme.dart';
 
 class ConversationHistoryScreen extends StatefulWidget {
   const ConversationHistoryScreen({super.key});
@@ -90,7 +91,7 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
             ),
             const SizedBox(height: 8),
@@ -98,7 +99,7 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
               'Start your first chat!',
               style: TextStyle(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                color: context.textSecondary,
               ),
             ),
           ],
@@ -143,7 +144,7 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey[300],
+                      color: context.track,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -165,13 +166,13 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: context.accent,
                               ),
                             ),
                             Text(
                               _formatDate(record.createdAt),
                               style: TextStyle(
-                                  fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
+                                  fontSize: 12, color: context.textSecondary),
                             ),
                           ],
                         ),
@@ -180,7 +181,7 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          color: context.accentSoft,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -188,7 +189,7 @@ class _ConversationHistoryScreenState extends State<ConversationHistoryScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: context.accent,
                           ),
                         ),
                       ),
@@ -319,28 +320,28 @@ class _HistoryCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         Icon(Icons.chat_bubble_outline,
-                            size: 14, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                            size: 14, color: context.textSecondary),
                         const SizedBox(width: 4),
                         Text(
                           '${record.messageCount} messages',
                           style:
-                              TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
+                              TextStyle(fontSize: 12, color: context.textSecondary),
                         ),
                         const SizedBox(width: 12),
                         Icon(Icons.star_outline,
-                            size: 14, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                            size: 14, color: context.textSecondary),
                         const SizedBox(width: 4),
                         Text(
                           '+${record.xpEarned} XP',
                           style:
-                              TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
+                              TextStyle(fontSize: 12, color: context.textSecondary),
                         ),
                       ],
                     ),

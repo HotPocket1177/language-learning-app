@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/kanji_item.dart';
+import '../theme/app_theme.dart';
 
 class KanjiScreen extends StatefulWidget {
   const KanjiScreen({super.key});
@@ -113,7 +114,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     Text(
                       'Stroke Count: ${kanji.strokeCount}',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: context.accent,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -151,7 +152,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                 Text(
                                   kanji.meaning,
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: context.accent,
                                         fontWeight: FontWeight.bold,
                                       ),
                                   textAlign: TextAlign.center,
@@ -169,7 +170,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                 Text(
                                   kanji.meaning,
                                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: context.accent,
                                         fontWeight: FontWeight.bold,
                                       ),
                                   textAlign: TextAlign.center,
@@ -191,7 +192,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                                     'Examples:',
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
-                                          color: Theme.of(context).colorScheme.primary,
+                                          color: context.accent,
                                         ),
                                   ),
                                 ),
@@ -211,7 +212,7 @@ class _KanjiScreenState extends State<KanjiScreen> {
                               Text(
                                 showDetails ? 'Tap to collapse' : 'Tap to show details',
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                      color: context.textSecondary,
                                       fontStyle: FontStyle.italic,
                                     ),
                               ),
@@ -233,7 +234,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
                         icon: const Icon(Icons.skip_next),
                         label: const Text('Skip'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[600],
+                          backgroundColor: context.accentSoft,
+                          foregroundColor: context.accent,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                       ),
@@ -275,10 +277,10 @@ class _DetailRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+        color: context.accentSoft,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          color: context.accent.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -288,7 +290,7 @@ class _DetailRow extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: context.textSecondary,
                   ),
             ),
           ),

@@ -4,6 +4,7 @@ import '../../services/auth_service.dart';
 import '../../providers/study_provider.dart';
 import '../home_screen.dart';
 import '../language_selector_screen.dart';
+import '../../theme/app_theme.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -125,8 +126,6 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In'),
-        backgroundColor: const Color(0xFF8b6f47),
-        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: SafeArea(
@@ -146,10 +145,10 @@ class _SignInScreenState extends State<SignInScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                     shadows: [
                       Shadow(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        color: context.accentSoft,
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -162,7 +161,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                    color: context.accent.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -179,7 +178,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     hintText: 'your.email@example.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -187,14 +186,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -240,7 +239,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       },
                     ),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surface,
+                    fillColor: context.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -248,14 +247,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                        color: context.accent.withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         width: 2.5,
                       ),
                     ),
@@ -290,7 +289,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text(
                       'Forgot Password?',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.accent,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -340,7 +339,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Text(
                       "Don't have an account? ",
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
+                        color: context.accent.withValues(alpha: 0.7),
                         fontSize: 15,
                       ),
                     ),
@@ -357,7 +356,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Text(
                         'Create Account',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),

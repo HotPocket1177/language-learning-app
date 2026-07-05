@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/kuma_message.dart';
 import 'kuma_mascot.dart';
 import 'kuma_speech_bubble.dart' show BubbleTailDirection;
+import '../theme/app_theme.dart';
 
 /// Kuma mascot positioned for the tutorial: larger, bottom-left, with a big speech bubble.
 class KumaTutorial extends StatefulWidget {
@@ -157,12 +158,12 @@ class _TutorialBubbleState extends State<_TutorialBubble>
             color: const Color(0xFFF5EBE0),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary,
+              color: context.accent,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                color: context.accent.withValues(alpha: 0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),

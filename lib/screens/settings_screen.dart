@@ -5,6 +5,7 @@ import '../providers/theme_provider.dart';
 import '../models/user_settings.dart';
 import '../services/kuma_service.dart';
 import 'tutorial_screen.dart';
+import '../theme/app_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -88,11 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
-              ),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -245,7 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: const Icon(Icons.replay, color: Color(0xFF8b6f47)),
+                    leading: Icon(Icons.replay, color: context.accent),
                     title: const Text('Replay Tutorial'),
                     subtitle: const Text('Watch the intro tutorial again'),
                     onTap: () async {
@@ -277,7 +274,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildSectionHeader('About'),
                 _buildCard([
                   ListTile(
-                    leading: const Icon(Icons.info_outline, color: Color(0xFF8b6f47)),
+                    leading: Icon(Icons.info_outline, color: context.accent),
                     title: const Text('Spaced Repetition System'),
                     subtitle: const Text('Based on SM-2 algorithm'),
                     onTap: () => _showSrsInfoDialog(),
@@ -341,7 +338,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
+          color: context.accent,
           letterSpacing: 0.5,
         ),
       ),
@@ -385,14 +382,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  color: context.accentSoft,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   subtitle,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -401,10 +398,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFF8b6f47),
-              inactiveTrackColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
-              thumbColor: const Color(0xFF8b6f47),
-              overlayColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
+              activeTrackColor: context.accent,
+              inactiveTrackColor: context.accent.withValues(alpha: 0.2),
+              thumbColor: context.accent,
+              overlayColor: context.accent.withValues(alpha: 0.2),
             ),
             child: Slider(
               value: value.clamp(min, max),
@@ -437,17 +434,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         subtitle,
         style: TextStyle(
           fontSize: 13,
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+          color: context.textSecondary,
         ),
       ),
       value: value,
       onChanged: onChanged,
-      activeTrackColor: const Color(0xFF8b6f47).withValues(alpha: 0.5),
+      activeTrackColor: context.accent.withValues(alpha: 0.5),
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF8b6f47);
+          return context.accent;
         }
-        return Colors.grey[400];
+        return context.textFaint;
       }),
     );
   }

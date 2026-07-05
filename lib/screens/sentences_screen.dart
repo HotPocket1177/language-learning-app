@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/sentence_item.dart';
+import '../theme/app_theme.dart';
 
 class SentencesScreen extends StatefulWidget {
   const SentencesScreen({super.key});
@@ -138,7 +139,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
-                color: Theme.of(context).colorScheme.surface,
+                color: context.surface,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -165,8 +166,6 @@ class _SentencesScreenState extends State<SentencesScreen> {
                               });
                             }
                           },
-                          selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                         );
                       }).toList(),
                     ),
@@ -214,7 +213,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                 Text(
                                   '$selectedCategory',
                                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: context.accent,
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -251,7 +250,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           Text(
                                             currentList[currentIndex].romaji,
                                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                                                  color: context.textSecondary,
                                                 ),
                                             textAlign: TextAlign.center,
                                           ),
@@ -259,7 +258,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           Text(
                                             currentList[currentIndex].english,
                                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                                  color: Theme.of(context).colorScheme.primary,
+                                                  color: context.accent,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                             textAlign: TextAlign.center,
@@ -276,7 +275,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           Text(
                                             currentList[currentIndex].romaji,
                                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                                                  color: context.textSecondary,
                                                 ),
                                             textAlign: TextAlign.center,
                                           ),
@@ -287,7 +286,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                               ? 'Tap to hide translation'
                                               : 'Tap to show translation',
                                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                                color: context.textSecondary,
                                                 fontStyle: FontStyle.italic,
                                               ),
                                         ),

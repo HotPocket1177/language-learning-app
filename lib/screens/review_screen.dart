@@ -8,6 +8,7 @@ import '../models/kuma_message.dart';
 import '../services/kuma_service.dart';
 import '../widgets/kuma_mascot.dart';
 import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
+import '../theme/app_theme.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String itemType;
@@ -226,11 +227,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
-              ),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : _reviewItems.isEmpty
               ? _buildEmptyState()
               : _currentIndex >= _reviewItems.length
@@ -257,7 +254,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
             ),
             const SizedBox(height: 12),
@@ -268,7 +265,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                color: context.textSecondary,
               ),
             ),
             const SizedBox(height: 32),
@@ -313,7 +310,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+                color: context.accent,
               ),
             ),
             const SizedBox(height: 12),
@@ -322,7 +319,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                color: context.textSecondary,
               ),
             ),
             const SizedBox(height: 8),
@@ -383,8 +380,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
             // Progress bar
             LinearProgressIndicator(
               value: _reviewItems.isEmpty ? 0 : _currentIndex / _reviewItems.length,
-              backgroundColor: const Color(0xFF8b6f47).withValues(alpha: 0.2),
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF8b6f47)),
+              backgroundColor: context.track,
             ),
 
             Expanded(
@@ -399,14 +395,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         Icon(
                           isVocabulary ? Icons.text_fields : Icons.format_quote,
                           size: 16,
-                          color: Theme.of(context).colorScheme.primary,
+                          color: context.accent,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           isVocabulary ? 'Vocabulary' : 'Sentence',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: context.accent,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -417,14 +413,14 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                            color: context.accentSoft,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             category,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: context.accent,
                             ),
                           ),
                         ),
@@ -475,7 +471,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 style: TextStyle(
                                   fontSize: isVocabulary ? 48 : 28,
                                   fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color: context.textPrimary,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -487,7 +483,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                 romaji,
                                 style: TextStyle(
                                   fontSize: isVocabulary ? 18 : 14,
-                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                                  color: context.textSecondary,
                                   fontStyle: FontStyle.italic,
                                 ),
                                 textAlign: TextAlign.center,
@@ -504,7 +500,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: context.accent,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -514,7 +510,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                   'Tap to reveal answer',
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                    color: context.textFaint,
                                   ),
                                 ),
                               ],
@@ -563,7 +559,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           'How well did you remember?',
           style: TextStyle(
             fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: context.textSecondary,
           ),
         ),
         const SizedBox(height: 12),

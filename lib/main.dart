@@ -127,7 +127,7 @@ class _AppInitializerState extends State<AppInitializer> {
                 errorBuilder: (_, _, _) => Icon(
                   Icons.pets,
                   size: 60,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                 ),
               ),
               const SizedBox(height: 8),
@@ -160,7 +160,7 @@ class _AppInitializerState extends State<AppInitializer> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      final primary = Theme.of(context).colorScheme.primary;
+      final primary = context.accent;
       return Scaffold(
         body: Center(
           child: Column(

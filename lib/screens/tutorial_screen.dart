@@ -4,6 +4,7 @@ import '../services/kuma_service.dart';
 import '../widgets/kuma_tutorial.dart';
 import '../widgets/tutorial_overlay.dart';
 import 'home_screen.dart';
+import '../theme/app_theme.dart';
 
 class TutorialScreen extends StatefulWidget {
   const TutorialScreen({super.key});
@@ -292,10 +293,10 @@ class _TutorialScreenState extends State<TutorialScreen>
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+            color: context.accent.withValues(alpha: 0.2),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+              color: context.accent.withValues(alpha: 0.4),
               width: 3,
             ),
           ),
@@ -333,10 +334,10 @@ class _TutorialScreenState extends State<TutorialScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+              color: context.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.star, color: Theme.of(context).colorScheme.primary, size: 36),
+            child: Icon(Icons.star, color: context.accent, size: 36),
           ),
           const SizedBox(width: 16),
           Column(
@@ -347,7 +348,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: context.accent,
                 ),
               ),
               const SizedBox(height: 8),
@@ -358,10 +359,8 @@ class _TutorialScreenState extends State<TutorialScreen>
                   height: 12,
                   child: LinearProgressIndicator(
                     value: 0.3,
-                    backgroundColor: Colors.grey[300],
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF8b6f47)),
-                  ),
+                    backgroundColor: context.track,
+                                      ),
                 ),
               ),
               const SizedBox(height: 4),
@@ -369,7 +368,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                 '30 / 100 XP',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                  color: context.textSecondary,
                 ),
               ),
             ],
@@ -455,7 +454,7 @@ class _TutorialScreenState extends State<TutorialScreen>
                     'Keep it going!',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65),
+                      color: context.textSecondary,
                     ),
                   ),
                 ],
@@ -474,7 +473,7 @@ class _TutorialScreenState extends State<TutorialScreen>
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+            color: context.accent.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: const Center(
@@ -568,15 +567,15 @@ class _MockCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          color: context.accent.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+            color: context.accent.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -603,10 +602,10 @@ class _MockStudyCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+          color: context.accent.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -614,10 +613,10 @@ class _MockStudyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              color: context.accentSoft,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
+            child: Icon(icon, color: context.accent, size: 24),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -629,13 +628,13 @@ class _MockStudyCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: context.accent,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.65)),
+                  style: TextStyle(fontSize: 13, color: context.textSecondary),
                 ),
               ],
             ),
@@ -669,8 +668,8 @@ class _ChatBubbleRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isKuma
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.18)
-                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+                ? context.accent.withValues(alpha: 0.18)
+                : context.accent.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -678,7 +677,7 @@ class _ChatBubbleRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               color: isKuma
-                  ? Theme.of(context).colorScheme.onSurface
+                  ? context.textPrimary
                   : Colors.white,
             ),
           ),
