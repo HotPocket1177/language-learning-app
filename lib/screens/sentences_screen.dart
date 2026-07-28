@@ -239,7 +239,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                       children: [
                                         if (!showEnglish) ...[
                                           Text(
-                                            currentList[currentIndex].japanese,
+                                            currentList[currentIndex].term,
                                             style: const TextStyle(
                                               fontSize: 36,
                                               fontWeight: FontWeight.bold,
@@ -248,7 +248,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           ),
                                           const SizedBox(height: 16),
                                           Text(
-                                            currentList[currentIndex].romaji,
+                                            currentList[currentIndex].pronunciation,
                                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                                   color: context.textSecondary,
                                                 ),
@@ -256,7 +256,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           ),
                                         ] else ...[
                                           Text(
-                                            currentList[currentIndex].english,
+                                            currentList[currentIndex].translation,
                                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                                   color: context.accent,
                                                   fontWeight: FontWeight.bold,
@@ -265,7 +265,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           ),
                                           const SizedBox(height: 24),
                                           Text(
-                                            currentList[currentIndex].japanese,
+                                            currentList[currentIndex].term,
                                             style: const TextStyle(
                                               fontSize: 28,
                                             ),
@@ -273,7 +273,7 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            currentList[currentIndex].romaji,
+                                            currentList[currentIndex].pronunciation,
                                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                                   color: context.textSecondary,
                                                 ),

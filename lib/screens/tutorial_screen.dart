@@ -28,8 +28,8 @@ class _TutorialScreenState extends State<TutorialScreen>
   static const _pages = [
     _TutorialPageData(
       emotion: KumaEmotion.happy,
-      message: "こんにちは! (Konnichiwa!)\nI'm Kuma-san! 🐻\nI'll be your study buddy!",
-      buttonText: "Nice to meet you, Kuma-san!",
+      message: "Hi there! 🐻\nI'm Kuma!\nI'll be your study buddy!",
+      buttonText: "Nice to meet you, Kuma!",
     ),
     _TutorialPageData(
       emotion: KumaEmotion.excited,
@@ -38,7 +38,7 @@ class _TutorialScreenState extends State<TutorialScreen>
     ),
     _TutorialPageData(
       emotion: KumaEmotion.encouraging,
-      message: "Tap here to learn new words! 📚\nPractice sentences here! 💬\nMaster kanji characters! 漢字",
+      message: "Tap here to learn new words! 📚\nPractice full sentences here! 💬\nEverything adapts to your pace!",
       buttonText: "Next",
     ),
     _TutorialPageData(
@@ -48,12 +48,12 @@ class _TutorialScreenState extends State<TutorialScreen>
     ),
     _TutorialPageData(
       emotion: KumaEmotion.happy,
-      message: "After lessons, we can chat! 💭\nPractice real conversations with me!\nUnlock after 5 mastered items!",
+      message: "Dress me up as you learn! 🎀\nUnlock outfits and skins\nby hitting your goals!",
       buttonText: "Next",
     ),
     _TutorialPageData(
       emotion: KumaEmotion.celebrating,
-      message: "よし! (Yoshi!) Let's start!\nChoose a topic and let's go! 🚀",
+      message: "Alright, let's start! 🚀\nEvery day counts — let's go!",
       buttonText: "Start Learning!",
     ),
   ];
@@ -315,7 +315,7 @@ class _TutorialScreenState extends State<TutorialScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'Your Japanese learning adventure starts here',
+          'Your language journey starts here',
           style: TextStyle(
             fontSize: 16,
             color: const Color(0xFFF5EBE0).withValues(alpha: 0.7),
@@ -485,17 +485,17 @@ class _TutorialScreenState extends State<TutorialScreen>
           child: Column(
             children: [
               _ChatBubbleRow(
-                text: 'こんにちは!',
+                text: 'Hello!',
                 isKuma: true,
               ),
               const SizedBox(height: 8),
               _ChatBubbleRow(
-                text: 'Hello, Kuma-san!',
+                text: 'Hello, Kuma!',
                 isKuma: false,
               ),
               const SizedBox(height: 8),
               _ChatBubbleRow(
-                text: 'すごい! Great job! 🌟',
+                text: 'Great job! 🌟',
                 isKuma: true,
               ),
             ],
@@ -531,7 +531,7 @@ class _TutorialScreenState extends State<TutorialScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'Time to start your Japanese journey',
+          'Time to start your journey',
           style: TextStyle(
             fontSize: 16,
             color: const Color(0xFFF5EBE0).withValues(alpha: 0.7),

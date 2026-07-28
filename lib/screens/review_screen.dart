@@ -361,15 +361,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final String category;
 
     if (currentItem is VocabularyItem) {
-      japanese = currentItem.japanese;
-      romaji = currentItem.romaji;
-      english = currentItem.english;
+      japanese = currentItem.term;
+      romaji = currentItem.pronunciation;
+      english = currentItem.translation;
       category = currentItem.category;
     } else {
       final item = currentItem as SentenceItem;
-      japanese = item.japanese;
-      romaji = item.romaji;
-      english = item.english;
+      japanese = item.term;
+      romaji = item.pronunciation;
+      english = item.translation;
       category = item.category;
     }
 
@@ -465,7 +465,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Japanese text
+                              // Term
                               Text(
                                 japanese,
                                 style: TextStyle(

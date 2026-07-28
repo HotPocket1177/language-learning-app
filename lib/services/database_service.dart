@@ -77,9 +77,9 @@ class DatabaseService {
           'item_id': item.id,
           'item_type': 'vocabulary',
           'language_code': languageCode,
-          'japanese_text': item.japanese,
-          'romaji_text': item.romaji,
-          'english_text': item.english,
+          'japanese_text': item.term,
+          'romaji_text': item.pronunciation,
+          'english_text': item.translation,
           'category': item.category,
           'user_note': item.userNote,
           'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
@@ -110,9 +110,9 @@ class DatabaseService {
           'item_id': item.id,
           'item_type': 'sentence',
           'language_code': languageCode,
-          'japanese_text': item.japanese,
-          'romaji_text': item.romaji,
-          'english_text': item.english,
+          'japanese_text': item.term,
+          'romaji_text': item.pronunciation,
+          'english_text': item.translation,
           'category': item.category,
           'user_note': item.userNote,
           'next_review_date': item.nextReviewDate?.toIso8601String().split('T')[0],
@@ -174,9 +174,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return VocabularyItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
           srsData: SrsData(
@@ -215,9 +215,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return SentenceItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
           srsData: SrsData(
@@ -280,9 +280,9 @@ class DatabaseService {
           'item_id': item.id,
           'item_type': 'vocabulary',
           'language_code': languageCode,
-          'japanese_text': item.japanese,
-          'romaji_text': item.romaji,
-          'english_text': item.english,
+          'japanese_text': item.term,
+          'romaji_text': item.pronunciation,
+          'english_text': item.translation,
           'category': item.category,
         },
         onConflict: 'user_id,item_id,language_code',
@@ -307,9 +307,9 @@ class DatabaseService {
           'item_id': item.id,
           'item_type': 'sentence',
           'language_code': languageCode,
-          'japanese_text': item.japanese,
-          'romaji_text': item.romaji,
-          'english_text': item.english,
+          'japanese_text': item.term,
+          'romaji_text': item.pronunciation,
+          'english_text': item.translation,
           'category': item.category,
         },
         onConflict: 'user_id,item_id,language_code',
@@ -337,9 +337,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return VocabularyItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
         );
       }).toList();
@@ -366,9 +366,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return SentenceItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
         );
       }).toList();
@@ -607,9 +607,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return VocabularyItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
           srsData: SrsData(
@@ -658,9 +658,9 @@ class DatabaseService {
       return (response as List).map((item) {
         return SentenceItem(
           id: item['item_id'] as String,
-          japanese: item['japanese_text'] as String,
-          romaji: item['romaji_text'] as String? ?? '',
-          english: item['english_text'] as String,
+          term: item['japanese_text'] as String,
+          pronunciation: item['romaji_text'] as String? ?? '',
+          translation: item['english_text'] as String,
           category: item['category'] as String? ?? 'General',
           userNote: item['user_note'] as String?,
           srsData: SrsData(

@@ -16,7 +16,6 @@ class StatsScreen extends StatelessWidget {
           final content = provider.currentLanguageContent;
           final totalVocab = content?.vocabulary.length ?? 0;
           final totalSentences = content?.sentences.length ?? 0;
-          final totalKanji = content?.specialContent?.length ?? 0;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -112,16 +111,6 @@ class StatsScreen extends StatelessWidget {
                           color: Colors.green,
                           icon: Icons.chat_bubble,
                         ),
-                        if (provider.hasSpecialContent) ...[
-                          const SizedBox(height: 16),
-                          _ProgressBar(
-                            label: 'Kanji',
-                            current: stats.totalKanjiLearned,
-                            total: totalKanji,
-                            color: Colors.red,
-                            icon: Icons.language,
-                          ),
-                        ],
                       ],
                     ),
                   ),

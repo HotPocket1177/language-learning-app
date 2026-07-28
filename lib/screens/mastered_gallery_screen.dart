@@ -165,9 +165,9 @@ class _VocabularyListTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Japanese text (large)
+                    // Term (large)
                     Text(
-                      item.japanese,
+                      item.term,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -177,7 +177,7 @@ class _VocabularyListTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     // Romaji (medium)
                     Text(
-                      item.romaji,
+                      item.pronunciation,
                       style: TextStyle(
                         fontSize: 14,
                         color: context.textSecondary,
@@ -187,7 +187,7 @@ class _VocabularyListTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     // English translation (smaller, brown)
                     Text(
-                      item.english,
+                      item.translation,
                       style: TextStyle(
                         fontSize: 15,
                         color: context.accent,
@@ -271,7 +271,7 @@ class _VocabularyListTile extends StatelessWidget {
             children: [
               const TextSpan(text: 'Remove '),
               TextSpan(
-                text: item.japanese,
+                text: item.term,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -303,7 +303,7 @@ class _VocabularyListTile extends StatelessWidget {
         .removeMasteredVocabulary(item.id);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${item.japanese} removed from mastered'),
+        content: Text('${item.term} removed from mastered'),
         backgroundColor: Colors.orange.shade700,
       ),
     );
@@ -318,13 +318,13 @@ class _VocabularyListTile extends StatelessWidget {
         title: Column(
           children: [
             Text(
-              item.japanese,
+              item.term,
               style: const TextStyle(fontSize: 32),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
             Text(
-              item.romaji,
+              item.pronunciation,
               style: TextStyle(
                 fontSize: 14,
                 color: context.textSecondary,
@@ -338,7 +338,7 @@ class _VocabularyListTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                item.english,
+                item.translation,
                 style: TextStyle(
                   fontSize: 18,
                   color: context.accent,
@@ -508,9 +508,9 @@ class _SentenceListTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Japanese text
+                    // Term
                     Text(
-                      item.japanese,
+                      item.term,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -520,7 +520,7 @@ class _SentenceListTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     // Romaji
                     Text(
-                      item.romaji,
+                      item.pronunciation,
                       style: TextStyle(
                         fontSize: 13,
                         color: context.textSecondary,
@@ -530,7 +530,7 @@ class _SentenceListTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     // English translation
                     Text(
-                      item.english,
+                      item.translation,
                       style: TextStyle(
                         fontSize: 14,
                         color: context.accent,
@@ -615,7 +615,7 @@ class _SentenceListTile extends StatelessWidget {
             children: [
               const TextSpan(text: 'Remove this sentence from mastered gallery?\n\n'),
               TextSpan(
-                text: item.japanese,
+                text: item.term,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -667,9 +667,9 @@ class _SentenceListTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Japanese
+              // Term
               Text(
-                item.japanese,
+                item.term,
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -678,7 +678,7 @@ class _SentenceListTile extends StatelessWidget {
               const SizedBox(height: 4),
               // Romaji
               Text(
-                item.romaji,
+                item.pronunciation,
                 style: TextStyle(
                   fontSize: 14,
                   color: context.textSecondary,
@@ -688,7 +688,7 @@ class _SentenceListTile extends StatelessWidget {
               const SizedBox(height: 8),
               // English
               Text(
-                item.english,
+                item.translation,
                 style: TextStyle(
                   fontSize: 16,
                   color: context.accent,

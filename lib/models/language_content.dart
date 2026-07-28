@@ -1,82 +1,52 @@
 import 'vocabulary_item.dart';
 import 'sentence_item.dart';
-import 'kanji_item.dart';
 
+/// Languages the app teaches. Bidirectional: a Czech speaker learns English,
+/// an English speaker learns Czech.
 enum SupportedLanguage {
-  japanese,
-  spanish,
-  czech,
-  german,
-  french;
+  english,
+  czech;
 
   String get displayName {
     switch (this) {
-      case SupportedLanguage.japanese:
-        return 'Japanese';
-      case SupportedLanguage.spanish:
-        return 'Spanish';
+      case SupportedLanguage.english:
+        return 'English';
       case SupportedLanguage.czech:
         return 'Czech';
-      case SupportedLanguage.german:
-        return 'German';
-      case SupportedLanguage.french:
-        return 'French';
     }
   }
 
   String get nativeName {
     switch (this) {
-      case SupportedLanguage.japanese:
-        return '日本語';
-      case SupportedLanguage.spanish:
-        return 'Español';
+      case SupportedLanguage.english:
+        return 'English';
       case SupportedLanguage.czech:
         return 'Čeština';
-      case SupportedLanguage.german:
-        return 'Deutsch';
-      case SupportedLanguage.french:
-        return 'Français';
     }
   }
 
   String get flag {
     switch (this) {
-      case SupportedLanguage.japanese:
-        return '🇯🇵';
-      case SupportedLanguage.spanish:
-        return '🇪🇸';
+      case SupportedLanguage.english:
+        return '🇬🇧';
       case SupportedLanguage.czech:
         return '🇨🇿';
-      case SupportedLanguage.german:
-        return '🇩🇪';
-      case SupportedLanguage.french:
-        return '🇫🇷';
     }
   }
 
   String get code {
     switch (this) {
-      case SupportedLanguage.japanese:
-        return 'ja';
-      case SupportedLanguage.spanish:
-        return 'es';
+      case SupportedLanguage.english:
+        return 'en';
       case SupportedLanguage.czech:
         return 'cs';
-      case SupportedLanguage.german:
-        return 'de';
-      case SupportedLanguage.french:
-        return 'fr';
     }
-  }
-
-  bool get hasSpecialContent {
-    return this == SupportedLanguage.japanese;
   }
 
   static SupportedLanguage fromCode(String code) {
     return SupportedLanguage.values.firstWhere(
       (lang) => lang.code == code,
-      orElse: () => SupportedLanguage.japanese,
+      orElse: () => SupportedLanguage.english,
     );
   }
 }
@@ -85,12 +55,10 @@ class LanguageContent {
   final SupportedLanguage language;
   final List<VocabularyItem> vocabulary;
   final List<SentenceItem> sentences;
-  final List<KanjiItem>? specialContent; // Only for Japanese (Kanji)
 
   LanguageContent({
     required this.language,
     required this.vocabulary,
     required this.sentences,
-    this.specialContent,
   });
 }

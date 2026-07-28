@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
-import '../models/kanji_item.dart';
 import '../models/user_stats.dart';
 import '../models/user_settings.dart';
 import '../models/review_item.dart';
@@ -101,18 +100,6 @@ class StudyProvider with ChangeNotifier {
     return content.sentences
         .where((item) => !masteredIds.contains(item.id) && !practiceIds.contains(item.id))
         .toList();
-  }
-
-  List<KanjiItem> get availableKanji {
-    final content = currentLanguageContent;
-    if (content?.specialContent == null) return [];
-    return content!.specialContent!
-        .where((item) => !_masteredKanji.contains(item.id))
-        .toList();
-  }
-
-  bool get hasSpecialContent {
-    return _selectedLanguage?.hasSpecialContent ?? false;
   }
 
   // Select language

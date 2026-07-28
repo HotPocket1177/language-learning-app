@@ -1,10 +1,12 @@
 import 'review_item.dart';
 
+/// A single example sentence in the language being learned.
+/// Language-neutral fields — see [VocabularyItem] for the naming rationale.
 class SentenceItem {
   final String id;
-  final String japanese;
-  final String romaji;
-  final String english;
+  final String term;
+  final String pronunciation;
+  final String translation;
   final String category;
   String? userNote;
 
@@ -13,9 +15,9 @@ class SentenceItem {
 
   SentenceItem({
     required this.id,
-    required this.japanese,
-    required this.romaji,
-    required this.english,
+    required this.term,
+    this.pronunciation = '',
+    required this.translation,
     required this.category,
     this.userNote,
     SrsData? srsData,
@@ -32,9 +34,9 @@ class SentenceItem {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'japanese': japanese,
-      'romaji': romaji,
-      'english': english,
+      'term': term,
+      'pronunciation': pronunciation,
+      'translation': translation,
       'category': category,
       'userNote': userNote,
       ...srsData.toJson(),
@@ -44,9 +46,9 @@ class SentenceItem {
   factory SentenceItem.fromJson(Map<String, dynamic> json) {
     return SentenceItem(
       id: json['id'],
-      japanese: json['japanese'],
-      romaji: json['romaji'],
-      english: json['english'],
+      term: json['term'] ?? json['japanese'] ?? '',
+      pronunciation: json['pronunciation'] ?? json['romaji'] ?? '',
+      translation: json['translation'] ?? json['english'] ?? '',
       category: json['category'],
       userNote: json['userNote'],
       srsData: SrsData.fromJson(json),
@@ -55,18 +57,18 @@ class SentenceItem {
 
   SentenceItem copyWith({
     String? id,
-    String? japanese,
-    String? romaji,
-    String? english,
+    String? term,
+    String? pronunciation,
+    String? translation,
     String? category,
     String? userNote,
     SrsData? srsData,
   }) {
     return SentenceItem(
       id: id ?? this.id,
-      japanese: japanese ?? this.japanese,
-      romaji: romaji ?? this.romaji,
-      english: english ?? this.english,
+      term: term ?? this.term,
+      pronunciation: pronunciation ?? this.pronunciation,
+      translation: translation ?? this.translation,
       category: category ?? this.category,
       userNote: userNote ?? this.userNote,
       srsData: srsData ?? this.srsData,

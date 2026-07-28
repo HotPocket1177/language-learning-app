@@ -10,7 +10,6 @@ import '../widgets/kuma_mascot.dart';
 import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
 import 'vocabulary_screen.dart';
 import 'sentences_screen.dart';
-import 'kanji_screen.dart';
 // TODO: Re-enable when AI conversations are ready
 // import 'conversation_topics_screen.dart';
 import 'mastered_gallery_screen.dart';
@@ -389,24 +388,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             studyNewScreen: const SentencesScreen(),
                           ),
                         ),
-                        const SizedBox(height: 12),
-
-                        if (provider.hasSpecialContent)
-                          _StudyCard(
-                            icon: Icons.language,
-                            title: 'Kanji Lessons',
-                            newCount: innerProvider.availableKanji.length,
-                            dueCount: innerProvider.dueKanjiCount,
-                            onTap: () => _showStudyModeSheet(
-                              title: 'Kanji Lessons',
-                              icon: Icons.language,
-                              newCount: innerProvider.availableKanji.length,
-                              dueCount: innerProvider.dueKanjiCount,
-                              itemType: 'kanji',
-                              studyNewScreen: const KanjiScreen(),
-                            ),
-                          ),
-                        if (provider.hasSpecialContent) const SizedBox(height: 12),
                         const SizedBox(height: 12),
 
                         // TODO: Re-enable when AI conversations are ready

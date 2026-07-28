@@ -181,7 +181,7 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.item.japanese,
+                              widget.item.term,
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              widget.item.romaji,
+                              widget.item.pronunciation,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                     color: context.textSecondary,
                                   ),
@@ -217,7 +217,7 @@ class _VocabularyPracticeCardState extends State<_VocabularyPracticeCard> {
                     const Divider(),
                     const SizedBox(height: 12),
                     Text(
-                      widget.item.english,
+                      widget.item.translation,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: context.accent,
                             fontWeight: FontWeight.bold,
@@ -364,7 +364,7 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                     children: [
                       Expanded(
                         child: Text(
-                          widget.item.japanese,
+                          widget.item.term,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -388,7 +388,7 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    widget.item.romaji,
+                    widget.item.pronunciation,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: context.textSecondary,
                         ),
@@ -398,7 +398,7 @@ class _SentencePracticeCardState extends State<_SentencePracticeCard> {
                     const Divider(),
                     const SizedBox(height: 12),
                     Text(
-                      widget.item.english,
+                      widget.item.translation,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: context.accent,
                             fontWeight: FontWeight.bold,

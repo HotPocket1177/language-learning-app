@@ -1,10 +1,17 @@
 import 'review_item.dart';
 
+/// A single vocabulary word in the language being learned.
+///
+/// Fields are language-neutral so the same model works in both directions
+/// (learning English or learning Czech):
+///  - [term]:        the word in the language you're studying
+///  - [pronunciation]: how to say it (phonetic hint; may be empty)
+///  - [translation]: its meaning in your own language
 class VocabularyItem {
   final String id;
-  final String japanese;
-  final String romaji;
-  final String english;
+  final String term;
+  final String pronunciation;
+  final String translation;
   final String category;
   String? userNote;
 
@@ -13,9 +20,9 @@ class VocabularyItem {
 
   VocabularyItem({
     required this.id,
-    required this.japanese,
-    required this.romaji,
-    required this.english,
+    required this.term,
+    this.pronunciation = '',
+    required this.translation,
     required this.category,
     this.userNote,
     SrsData? srsData,
@@ -32,9 +39,9 @@ class VocabularyItem {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'japanese': japanese,
-      'romaji': romaji,
-      'english': english,
+      'term': term,
+      'pronunciation': pronunciation,
+      'translation': translation,
       'category': category,
       'userNote': userNote,
       ...srsData.toJson(),
@@ -44,9 +51,10 @@ class VocabularyItem {
   factory VocabularyItem.fromJson(Map<String, dynamic> json) {
     return VocabularyItem(
       id: json['id'],
-      japanese: json['japanese'],
-      romaji: json['romaji'],
-      english: json['english'],
+      // Tolerate legacy keys from before the Czech/English pivot.
+      term: json['term'] ?? json['japanese'] ?? '',
+      pronunciation: json['pronunciation'] ?? json['romaji'] ?? '',
+      translation: json['translation'] ?? json['english'] ?? '',
       category: json['category'],
       userNote: json['userNote'],
       srsData: SrsData.fromJson(json),
@@ -55,18 +63,18 @@ class VocabularyItem {
 
   VocabularyItem copyWith({
     String? id,
-    String? japanese,
-    String? romaji,
-    String? english,
+    String? term,
+    String? pronunciation,
+    String? translation,
     String? category,
     String? userNote,
     SrsData? srsData,
   }) {
     return VocabularyItem(
       id: id ?? this.id,
-      japanese: japanese ?? this.japanese,
-      romaji: romaji ?? this.romaji,
-      english: english ?? this.english,
+      term: term ?? this.term,
+      pronunciation: pronunciation ?? this.pronunciation,
+      translation: translation ?? this.translation,
       category: category ?? this.category,
       userNote: userNote ?? this.userNote,
       srsData: srsData ?? this.srsData,

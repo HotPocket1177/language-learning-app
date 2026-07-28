@@ -103,21 +103,21 @@ class KumaService {
     }
   }
 
-  // ---- Message pools (Japanese + English mix) ----
+  // ---- Message pools ----
 
   static const _encouragingMessages = [
-    KumaMessage(text: "がんばって! (Ganbatte!) 💪", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.encouraging),
+    KumaMessage(text: "Keep going! 💪", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.encouraging),
     KumaMessage(text: "You're doing great! ⭐", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.happy),
     KumaMessage(text: "Keep it up! 🔥", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.happy),
-    KumaMessage(text: "すごい! (Sugoi!) 🌟", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.excited),
+    KumaMessage(text: "Awesome! 🌟", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.excited),
     KumaMessage(text: "やった! (Yatta!) 🎉", category: KumaMessageCategory.encouraging, emotion: KumaEmotion.celebrating),
   ];
 
   static const _motivationalMessages = [
-    KumaMessage(text: "こんにちは! (Konnichiwa!) 🐻", category: KumaMessageCategory.motivational, emotion: KumaEmotion.happy),
+    KumaMessage(text: "Hi there! 🐻", category: KumaMessageCategory.motivational, emotion: KumaEmotion.happy),
     KumaMessage(text: "Ready to learn? 📚", category: KumaMessageCategory.motivational, emotion: KumaEmotion.happy),
     KumaMessage(text: "You got this! 💪", category: KumaMessageCategory.motivational, emotion: KumaEmotion.encouraging),
-    KumaMessage(text: "Great job! すごい! ⭐", category: KumaMessageCategory.motivational, emotion: KumaEmotion.excited),
+    KumaMessage(text: "Great job! ⭐", category: KumaMessageCategory.motivational, emotion: KumaEmotion.excited),
     KumaMessage(text: "Practice makes perfect! 📝", category: KumaMessageCategory.motivational, emotion: KumaEmotion.idle),
     KumaMessage(text: "One word at a time! 🌱", category: KumaMessageCategory.motivational, emotion: KumaEmotion.encouraging),
   ];
@@ -145,7 +145,7 @@ class KumaService {
   KumaMessage getCorrectAnswerReaction() {
     const reactions = [
       KumaMessage(text: "やった! (Yatta!) Perfect! 🎉", category: KumaMessageCategory.reaction, emotion: KumaEmotion.excited),
-      KumaMessage(text: "すごい! (Sugoi!) Amazing! 🌟", category: KumaMessageCategory.reaction, emotion: KumaEmotion.excited),
+      KumaMessage(text: "Amazing work! 🌟", category: KumaMessageCategory.reaction, emotion: KumaEmotion.excited),
       KumaMessage(text: "素晴らしい! (Subarashii!) ⭐", category: KumaMessageCategory.reaction, emotion: KumaEmotion.excited),
       KumaMessage(text: "Nice one! 🎯", category: KumaMessageCategory.reaction, emotion: KumaEmotion.happy),
       KumaMessage(text: "Perfect! 💯", category: KumaMessageCategory.reaction, emotion: KumaEmotion.excited),
@@ -157,7 +157,7 @@ class KumaService {
   KumaMessage getWrongAnswerReaction() {
     const reactions = [
       KumaMessage(text: "大丈夫! (Daijoubu!) Try again! 💪", category: KumaMessageCategory.reaction, emotion: KumaEmotion.encouraging),
-      KumaMessage(text: "頑張って! (Ganbatte!) Don't give up! 🔥", category: KumaMessageCategory.reaction, emotion: KumaEmotion.encouraging),
+      KumaMessage(text: "Keep going! Don't give up! 🔥", category: KumaMessageCategory.reaction, emotion: KumaEmotion.encouraging),
       KumaMessage(text: "You'll get it next time! 💪", category: KumaMessageCategory.reaction, emotion: KumaEmotion.encouraging),
       KumaMessage(text: "大丈夫! (Daijoubu!) 🐻", category: KumaMessageCategory.reaction, emotion: KumaEmotion.encouraging),
     ];
@@ -168,7 +168,7 @@ class KumaService {
   KumaMessage getStreakReaction(int streak) {
     if (streak >= 5) {
       return const KumaMessage(
-        text: "🔥 On fire! すごい!",
+        text: "🔥 On fire! Amazing!",
         category: KumaMessageCategory.reaction,
         emotion: KumaEmotion.celebrating,
       );
@@ -192,7 +192,7 @@ class KumaService {
   /// Level up reaction
   KumaMessage getLevelUpReaction(int level) {
     return KumaMessage(
-      text: 'Level $level! すごい! 🌟',
+      text: 'Level $level! Awesome! 🌟',
       category: KumaMessageCategory.reaction,
       emotion: KumaEmotion.celebrating,
     );
@@ -201,7 +201,7 @@ class KumaService {
   /// Messages for the first-launch tutorial steps
   List<KumaMessage> get tutorialMessages => const [
         KumaMessage(
-          text: "こんにちは! I'm Kuma, your study buddy! 🐻",
+          text: "Hi! I'm Kuma, your study buddy! 🐻",
           category: KumaMessageCategory.tutorial,
           emotion: KumaEmotion.happy,
         ),
@@ -216,7 +216,7 @@ class KumaService {
           emotion: KumaEmotion.idle,
         ),
         KumaMessage(
-          text: "Review words to remember them forever! がんばって! 🔥",
+          text: "Review words to remember them forever! Keep it up! 🔥",
           category: KumaMessageCategory.tutorial,
           emotion: KumaEmotion.celebrating,
         ),
