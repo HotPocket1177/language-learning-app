@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/study_provider.dart';
 import '../services/achievement_service.dart';
+import '../services/auth_service.dart';
 import 'achievements_screen.dart';
 import 'customization_screen.dart';
 import 'stats_screen.dart';
@@ -410,6 +411,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
                           ),
+                          if (!provider.isGuest) ...[
+                            const SizedBox(height: 8),
+                            TextButton.icon(
+                              onPressed: () => _handleDeleteAccount(context),
+                              icon: const Icon(Icons.delete_forever, size: 20),
+                              label: const Text('Delete Account'),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -541,6 +554,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
       scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text('Failed to sign out: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleDeleteAccount(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    // Require the user to type DELETE — this is irreversible and syncs to cloud.
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        final controller = TextEditingController();
+        var canDelete = false;
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.red),
+                SizedBox(width: 8),
+                Text('Delete Account'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'This permanently deletes your account and all your '
+                  'progress — vocabulary, streaks, stats, and achievements. '
+                  'This cannot be undone.',
+                ),
+                const SizedBox(height: 16),
+                const Text('Type DELETE to confirm:'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'DELETE',
+                  ),
+                  onChanged: (value) => setState(
+                    () => canDelete = value.trim().toUpperCase() == 'DELETE',
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: canDelete
+                    ? () => Navigator.pop(dialogContext, true)
+                    : null,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text('Delete Forever'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) =>
+          const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      await AuthService().deleteAccount();
+      navigator.pushNamedAndRemoveUntil('/welcome', (route) => false);
+    } catch (e) {
+      navigator.pop(); // Close loading dialog
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text('$e'),
           backgroundColor: Colors.red,
         ),
       );

@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'supabase_service.dart';
 
@@ -187,15 +188,34 @@ class AuthService {
     }
   }
 
-  // Delete user account
+  /// Permanently delete the signed-in user's account and all their data.
+  ///
+  /// The anon key can't delete an `auth.users` row directly, so this calls a
+  /// `delete_account` Postgres function (SECURITY DEFINER) that wipes the
+  /// user's rows and removes the auth user. See SUPABASE_SETUP.md for the SQL.
+  /// Required by Apple (apps with sign-up must offer in-app deletion) and GDPR.
   Future<void> deleteAccount() async {
     try {
-      // Note: Supabase doesn't have a direct delete user endpoint from client
-      // This would typically be done via a server-side function
-      // For now, we'll just sign out
-      await signOut();
+      await _supabase.rpc('delete_account');
+    } on PostgrestException catch (e) {
+      throw 'Could not delete your account: ${e.message}';
+    } on AuthException catch (e) {
+      throw _handleAuthException(e);
     } catch (e) {
-      throw 'Failed to delete account: $e';
+      throw 'Could not delete your account: $e';
+    }
+
+    // Clear the now-orphaned session and any cached local data.
+    try {
+      await _supabase.auth.signOut();
+    } catch (_) {
+      // Session is already invalid server-side — local sign-out is best-effort.
+    }
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+    } catch (_) {
+      // Local wipe is best-effort; account is already gone server-side.
     }
   }
 }
