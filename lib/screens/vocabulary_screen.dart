@@ -6,6 +6,7 @@ import '../models/kuma_message.dart';
 import '../services/kuma_service.dart';
 import '../widgets/kuma_mascot.dart';
 import '../widgets/kuma_speech_bubble.dart' show BubbleTailDirection;
+import '../widgets/empty_state.dart';
 import '../theme/app_theme.dart';
 
 class VocabularyScreen extends StatefulWidget {
@@ -232,27 +233,11 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                   // Flashcard Area
                   Expanded(
                     child: currentList.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  size: 80,
-                                  color: Colors.green[300],
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'All words mastered!',
-                                  style: Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Try another category',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
+                        ? const EmptyState(
+                            icon: Icons.check_circle,
+                            color: Color(0xFF6B9E64),
+                            title: 'All words mastered!',
+                            subtitle: 'Try another category',
                           )
                         : Padding(
                             padding: const EdgeInsets.all(16),

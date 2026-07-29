@@ -197,12 +197,19 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: context.accent),
-        const SizedBox(width: 8),
+        Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: context.coral.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 18, color: context.coral),
+        ),
+        const SizedBox(width: 10),
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w800,
                 color: context.accent,
               ),
         ),
@@ -356,22 +363,10 @@ class _CategoryBreakdown extends StatelessWidget {
       ..sort((a, b) => b.value.compareTo(a.value));
     final maxCount = sorted.first.value;
 
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.pink,
-      Colors.indigo,
-    ];
-
     return Column(
       children: sorted.asMap().entries.map((entry) {
-        final i = entry.key;
         final cat = entry.value;
-        final color = colors[i % colors.length];
+        final color = context.categoryColor(cat.key);
         final pct = maxCount > 0 ? cat.value / maxCount : 0.0;
 
         return Padding(

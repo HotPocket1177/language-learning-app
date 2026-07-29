@@ -43,9 +43,9 @@ class _CustomizationScreenState extends State<CustomizationScreen>
         title: const Text('Customize Kuma'),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          indicatorColor: context.accent,
+          labelColor: context.accent,
+          unselectedLabelColor: context.textSecondary,
           tabs: const [
             Tab(icon: Icon(Icons.checkroom), text: 'Outfits'),
             Tab(icon: Icon(Icons.palette), text: 'Themes'),

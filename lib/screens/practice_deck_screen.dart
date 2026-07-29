@@ -4,6 +4,7 @@ import '../providers/study_provider.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
 import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
 
 class PracticeDeckScreen extends StatefulWidget {
   const PracticeDeckScreen({super.key});
@@ -41,11 +42,11 @@ class _PracticeDeckScreenState extends State<PracticeDeckScreen>
             ),
             child: TabBar(
               controller: _tabController,
-              indicatorColor: Colors.white,
+              indicatorColor: context.accent,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
+              labelColor: context.accent,
+              unselectedLabelColor: context.textSecondary,
               labelStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -107,29 +108,10 @@ class _VocabularyPracticeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (vocabulary.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.fitness_center,
-              size: 80,
-              color: context.textFaint,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No vocabulary to practice',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Add words from the study section!',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.textSecondary,
-                  ),
-            ),
-          ],
-        ),
+      return const EmptyState(
+        icon: Icons.fitness_center,
+        title: 'No vocabulary to practice',
+        subtitle: 'Add words from the study section!',
       );
     }
 
@@ -292,29 +274,10 @@ class _SentencesPracticeList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (sentences.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.fitness_center,
-              size: 80,
-              color: context.textFaint,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No sentences to practice',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Add sentences from the study section!',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.textSecondary,
-                  ),
-            ),
-          ],
-        ),
+      return const EmptyState(
+        icon: Icons.fitness_center,
+        title: 'No sentences to practice',
+        subtitle: 'Add sentences from the study section!',
       );
     }
 

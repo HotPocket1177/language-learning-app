@@ -78,10 +78,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           if (_hasChanges)
             TextButton(
               onPressed: _isLoading ? null : _saveSettings,
-              child: const Text(
+              child: Text(
                 'Save',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: context.accent,
                   fontWeight: FontWeight.bold,
                 ),
               ),

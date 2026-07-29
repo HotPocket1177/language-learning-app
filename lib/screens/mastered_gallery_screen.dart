@@ -4,6 +4,7 @@ import '../providers/study_provider.dart';
 import '../models/vocabulary_item.dart';
 import '../models/sentence_item.dart';
 import '../theme/app_theme.dart';
+import '../widgets/empty_state.dart';
 
 class MasteredGalleryScreen extends StatefulWidget {
   const MasteredGalleryScreen({super.key});
@@ -41,11 +42,11 @@ class _MasteredGalleryScreenState extends State<MasteredGalleryScreen>
             ),
             child: TabBar(
               controller: _tabController,
-              indicatorColor: Colors.white,
+              indicatorColor: context.accent,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
+              labelColor: context.accent,
+              unselectedLabelColor: context.textSecondary,
               labelStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -111,7 +112,7 @@ class _VocabularyList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (vocabulary.isEmpty) {
-      return _EmptyState(
+      return const EmptyState(
         icon: Icons.book_outlined,
         title: 'No mastered vocabulary yet',
         subtitle: 'Start learning to see your progress here!',
@@ -454,7 +455,7 @@ class _SentencesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (sentences.isEmpty) {
-      return _EmptyState(
+      return const EmptyState(
         icon: Icons.chat_bubble_outline,
         title: 'No mastered sentences yet',
         subtitle: 'Start learning to see your progress here!',
@@ -793,49 +794,3 @@ class _SentenceListTile extends StatelessWidget {
 // EMPTY STATE WIDGET
 // ============================================
 
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _EmptyState({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 80,
-              color: context.accent.withValues(alpha: 0.3),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: context.accent,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.textSecondary,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

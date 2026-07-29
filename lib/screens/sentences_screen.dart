@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/study_provider.dart';
 import '../models/sentence_item.dart';
+import '../widgets/empty_state.dart';
 import '../theme/app_theme.dart';
 
 class SentencesScreen extends StatefulWidget {
@@ -189,27 +190,11 @@ class _SentencesScreenState extends State<SentencesScreen> {
               // Flashcard Area
               Expanded(
                 child: currentList.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              size: 80,
-                              color: Colors.green[300],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'All sentences mastered!',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Try another category',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                          ],
-                        ),
+                    ? const EmptyState(
+                        icon: Icons.check_circle,
+                        color: Color(0xFF6B9E64),
+                        title: 'All sentences mastered!',
+                        subtitle: 'Try another category',
                       )
                     : Padding(
                         padding: const EdgeInsets.all(16),

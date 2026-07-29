@@ -49,108 +49,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Profile Card
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: context.accent.withValues(alpha: 0.2),
-                          child: Text(
-                            stats.userName.isNotEmpty ? stats.userName[0].toUpperCase() : 'S',
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: context.accent,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          stats.userName,
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          onPressed: () => _showEditNameDialog(context, stats.userName),
-                          icon: const Icon(Icons.edit, size: 18),
-                          label: const Text('Edit Name'),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Level & XP Card
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _StatColumn(
-                              icon: Icons.star,
-                              label: 'Level',
-                              value: '${stats.level}',
-                              color: context.accent,
-                            ),
-                            Container(width: 1, height: 60, color: context.track),
-                            _StatColumn(
-                              icon: Icons.trending_up,
-                              label: 'Total XP',
-                              value: '${stats.xp}',
-                              color: Colors.purple,
-                            ),
-                            Container(width: 1, height: 60, color: context.track),
-                            _StatColumn(
-                              icon: Icons.local_fire_department,
-                              label: 'Streak',
-                              value: '${stats.currentStreak}',
-                              color: Colors.orange,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        const Divider(),
-                        const SizedBox(height: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Progress to Level ${stats.level + 1}',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            const SizedBox(height: 12),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: LinearProgressIndicator(
-                                value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
-                                minHeight: 20,
-                                backgroundColor: context.track,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: context.textSecondary,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                // Gradient identity hero — avatar, name, level, stats & XP
+                _ProfileHero(
+                  userName: stats.userName,
+                  level: stats.level,
+                  xp: stats.xp,
+                  xpInLevel: stats.xp % stats.xpForNextLevel,
+                  xpForNextLevel: stats.xpForNextLevel,
+                  currentStreak: stats.currentStreak,
+                  onEdit: () => _showEditNameDialog(context, stats.userName),
                 ),
                 const SizedBox(height: 16),
 
@@ -270,12 +177,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(11),
                             decoration: BoxDecoration(
-                              color: context.accentSoft,
-                              borderRadius: BorderRadius.circular(8),
+                              color: const Color(0xFF9B72CF).withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(13),
                             ),
-                            child: Icon(Icons.checkroom, color: context.accent, size: 24),
+                            child: const Icon(Icons.checkroom, color: Color(0xFF9B72CF), size: 24),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -285,8 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Text(
                                   'Customize Kuma',
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: context.accent,
+                                        fontWeight: FontWeight.w800,
+                                        color: context.textPrimary,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
@@ -299,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          Icon(Icons.arrow_forward_ios, size: 16, color: context.textFaint),
                         ],
                       ),
                     ),
@@ -320,12 +227,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(11),
                             decoration: BoxDecoration(
-                              color: context.accentSoft,
-                              borderRadius: BorderRadius.circular(8),
+                              color: const Color(0xFF2FA8A0).withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(13),
                             ),
-                            child: Icon(Icons.bar_chart, color: context.accent, size: 24),
+                            child: const Icon(Icons.bar_chart, color: Color(0xFF2FA8A0), size: 24),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -335,8 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Text(
                                   'Detailed Stats',
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: context.accent,
+                                        fontWeight: FontWeight.w800,
+                                        color: context.textPrimary,
                                       ),
                                 ),
                                 const SizedBox(height: 4),
@@ -349,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          Icon(Icons.arrow_forward_ios, size: 16, color: context.textFaint),
                         ],
                       ),
                     ),
@@ -640,38 +547,188 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-class _StatColumn extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
+/// Gradient identity hero: avatar, name, an edit affordance, three translucent
+/// stat pods (Level · Total XP · Streak) and the XP-to-next-level bar.
+class _ProfileHero extends StatelessWidget {
+  final String userName;
+  final int level;
+  final int xp;
+  final int xpInLevel;
+  final int xpForNextLevel;
+  final int currentStreak;
+  final VoidCallback onEdit;
 
-  const _StatColumn({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
+  const _ProfileHero({
+    required this.userName,
+    required this.level,
+    required this.xp,
+    required this.xpInLevel,
+    required this.xpForNextLevel,
+    required this.currentStreak,
+    required this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, size: 32, color: color),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
+    final progress = xpForNextLevel == 0 ? 0.0 : xpInLevel / xpForNextLevel;
+    final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'S';
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: context.heroGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: BrandColors.coral.withValues(alpha: 0.26),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 68,
+                height: 68,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.6), width: 3),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF8b6f47),
+                  ),
+                ),
               ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Level $level',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: onEdit,
+                tooltip: 'Edit name',
+                icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white.withValues(alpha: 0.18),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              _HeroStatPod(icon: Icons.star_rounded, label: 'Level', value: '$level'),
+              const SizedBox(width: 10),
+              _HeroStatPod(icon: Icons.trending_up_rounded, label: 'Total XP', value: '$xp'),
+              const SizedBox(width: 10),
+              _HeroStatPod(icon: Icons.local_fire_department_rounded, label: 'Streak', value: '$currentStreak'),
+            ],
+          ),
+          const SizedBox(height: 18),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.white.withValues(alpha: 0.25),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '$xpInLevel / $xpForNextLevel XP to Level ${level + 1}',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One translucent stat pod inside [_ProfileHero].
+class _HeroStatPod extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _HeroStatPod({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.16),
+          borderRadius: BorderRadius.circular(14),
         ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.white, size: 22),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                height: 1.0,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.85),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
