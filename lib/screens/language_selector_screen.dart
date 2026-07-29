@@ -19,26 +19,48 @@ class LanguageSelectorScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(
-                Icons.language,
-                size: 80,
-                color: context.accent,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Choose Your Language',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Select the language you want to learn',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: context.accent.withValues(alpha: 0.7),
+              // Gradient hero
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                decoration: BoxDecoration(
+                  gradient: context.heroGradient,
+                  borderRadius: BorderRadius.circular(26),
+                  boxShadow: [
+                    BoxShadow(
+                      color: BrandColors.coral.withValues(alpha: 0.28),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    const Icon(Icons.travel_explore, size: 56, color: Colors.white),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Choose Your Language',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.6,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Which one do you want to master?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 36),
               Expanded(
                 child: ListView.builder(
                   itemCount: SupportedLanguage.values.length,
@@ -48,6 +70,9 @@ class LanguageSelectorScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: _LanguageCard(
                         language: language,
+                        accent: index.isEven
+                            ? const Color(0xFF4B93C4)
+                            : const Color(0xFFFF6B5C),
                         onTap: () async {
                           final provider = context.read<StudyProvider>();
                           final kumaService = KumaService();
@@ -81,10 +106,12 @@ class LanguageSelectorScreen extends StatelessWidget {
 
 class _LanguageCard extends StatelessWidget {
   final SupportedLanguage language;
+  final Color accent;
   final VoidCallback onTap;
 
   const _LanguageCard({
     required this.language,
+    required this.accent,
     required this.onTap,
   });
 
@@ -93,25 +120,26 @@ class _LanguageCard extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: context.accent.withValues(alpha: 0.3),
-          width: 2,
+          color: accent.withValues(alpha: 0.35),
+          width: 1.5,
         ),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Row(
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: 62,
+                height: 62,
                 decoration: BoxDecoration(
-                  color: context.accentSoft,
-                  borderRadius: BorderRadius.circular(12),
+                  color: accent.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: accent.withValues(alpha: 0.25)),
                 ),
                 child: Center(
                   child: Text(
@@ -126,28 +154,36 @@ class _LanguageCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      language.displayName,
+                      'Learn ${language.displayName}',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: context.accent,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                        color: context.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       language.nativeName,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         color: context.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: context.accent,
-                size: 24,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.14),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: accent,
+                  size: 20,
+                ),
               ),
             ],
           ),

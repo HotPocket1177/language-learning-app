@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Trigger Kuma celebrating
     setState(() {
       _kumaEmotion = KumaEmotion.celebrating;
-      _kumaBubbleText = 'おめでとう！ 🎉';
+      _kumaBubbleText = 'Congratulations! 🎉';
       _showKumaBubble = true;
     });
 
@@ -139,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             Text(
-                              a.titleJp,
+                              a.subtitle,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: context.textSecondary,
@@ -258,24 +258,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Welcome Card
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Welcome, ${stats.userName}!',
-                                  style: Theme.of(context).textTheme.headlineMedium,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Keep learning!',
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                          ),
+                        // Gradient hero — greeting + level ring + XP progress
+                        _HeroHeader(
+                          userName: stats.userName,
+                          level: stats.level,
+                          xpInLevel: stats.xp % stats.xpForNextLevel,
+                          xpForNextLevel: stats.xpForNextLevel,
                         ),
                         const SizedBox(height: 16),
 
@@ -284,83 +272,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Expanded(
                               child: _StatCard(
-                                icon: Icons.star,
-                                title: 'Level',
-                                value: '${stats.level}',
-                                color: context.accent,
+                                icon: Icons.local_fire_department,
+                                title: 'Day streak',
+                                value: '${stats.currentStreak}',
+                                color: context.coral,
                               ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: _StatCard(
-                                icon: Icons.local_fire_department,
-                                title: 'Streak',
-                                value: '${stats.currentStreak}',
-                                color: Colors.orange,
+                                icon: Icons.workspace_premium,
+                                title: 'Mastered',
+                                value: '${stats.totalWordsLearned + stats.totalSentencesLearned}',
+                                color: const Color(0xFF6B9E64),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-
-                        // XP Progress Card
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Experience',
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                            color: context.accent,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    Text(
-                                      '${stats.xp % stats.xpForNextLevel} / ${stats.xpForNextLevel} XP',
-                                      style: Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: LinearProgressIndicator(
-                                    value: (stats.xp % stats.xpForNextLevel) / stats.xpForNextLevel,
-                                    minHeight: 20,
-                                    backgroundColor: context.track,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '${stats.xpForNextLevel - (stats.xp % stats.xpForNextLevel)} XP to Level ${stats.level + 1}',
-                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                        color: context.textSecondary,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                         const SizedBox(height: 24),
 
                         // Study Sections
-                        Text(
-                          'Study',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: context.accent,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
+                        const _SectionHeader('Study', Icons.school),
                         const SizedBox(height: 12),
 
                         _StudyCard(
                           icon: Icons.book,
                           title: 'Vocabulary',
+                          color: context.coral,
                           newCount: innerProvider.availableVocabulary.length,
                           dueCount: innerProvider.dueVocabularyCount,
                           onTap: () => _showStudyModeSheet(
@@ -377,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _StudyCard(
                           icon: Icons.chat_bubble,
                           title: 'Sentences',
+                          color: const Color(0xFF4B93C4),
                           newCount: innerProvider.availableSentences.length,
                           dueCount: innerProvider.dueSentencesCount,
                           onTap: () => _showStudyModeSheet(
@@ -388,36 +327,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             studyNewScreen: const SentencesScreen(),
                           ),
                         ),
-                        const SizedBox(height: 12),
-
-                        // TODO: Re-enable when AI conversations are ready
-                        // _ConversationsCard(
-                        //   totalMastered: stats.totalWordsLearned +
-                        //       stats.totalSentencesLearned,
-                        //   level: stats.level,
-                        //   onTap: () => Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (_) =>
-                        //             const ConversationTopicsScreen()),
-                        //   ),
-                        // ),
-                        _ComingSoonCard(),
                         const SizedBox(height: 24),
 
                         // Progress Sections
-                        Text(
-                          'Your Progress',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: context.accent,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
+                        const _SectionHeader('Your Progress', Icons.insights),
                         const SizedBox(height: 12),
 
                         _MenuButton(
                           icon: Icons.grid_view,
                           title: 'Mastered Gallery',
+                          color: const Color(0xFF6B9E64),
                           subtitle:
                               '${stats.totalWordsLearned + stats.totalSentencesLearned} items mastered',
                           onTap: () => Navigator.push(
@@ -430,6 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _MenuButton(
                           icon: Icons.fitness_center,
                           title: 'Practice Deck',
+                          color: const Color(0xFFE8883A),
                           subtitle:
                               '${innerProvider.practiceVocabulary.length + innerProvider.practiceSentences.length} items to practice',
                           onTap: () => Navigator.push(
@@ -442,6 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _MenuButton(
                           icon: Icons.bar_chart,
                           title: 'Detailed Stats',
+                          color: const Color(0xFF2FA8A0),
                           subtitle: 'Streaks, heatmap & progress',
                           onTap: () => Navigator.push(
                             context,
@@ -453,6 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _MenuButton(
                           icon: Icons.person,
                           title: 'Profile',
+                          color: const Color(0xFF9B72CF),
                           subtitle: 'View your achievements',
                           onTap: () => Navigator.push(
                             context,
@@ -492,6 +414,169 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+/// Warm gradient hero at the top of Home: greeting, a circular level ring,
+/// and the XP-to-next-level progress. The single biggest "pop" element.
+class _HeroHeader extends StatelessWidget {
+  final String userName;
+  final int level;
+  final int xpInLevel;
+  final int xpForNextLevel;
+
+  const _HeroHeader({
+    required this.userName,
+    required this.level,
+    required this.xpInLevel,
+    required this.xpForNextLevel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = xpForNextLevel == 0 ? 0.0 : xpInLevel / xpForNextLevel;
+    final remaining = xpForNextLevel - xpInLevel;
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: context.heroGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: BrandColors.coral.withValues(alpha: 0.28),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome back,',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$userName!',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Level ring
+              SizedBox(
+                width: 62,
+                height: 62,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 62,
+                      height: 62,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 5,
+                        backgroundColor: Colors.white.withValues(alpha: 0.25),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$level',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            height: 1.0,
+                          ),
+                        ),
+                        Text(
+                          'LVL',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.white.withValues(alpha: 0.25),
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$remaining XP to Level ${level + 1}',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Section header with a rounded accent "chip" icon — replaces the plain
+/// text headers so each section reads as a distinct, lively block.
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const _SectionHeader(this.title, this.icon);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(7),
+          decoration: BoxDecoration(
+            color: context.coral.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 18, color: context.coral),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+      ],
+    );
+  }
+}
+
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -510,21 +595,39 @@ class _StatCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
+        child: Row(
           children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 24, color: color),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium,
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                    height: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: context.textSecondary,
+                      ),
+                ),
+              ],
             ),
           ],
         ),
@@ -539,6 +642,7 @@ class _StudyCard extends StatelessWidget {
   final String title;
   final int newCount;
   final int dueCount;
+  final Color color;
   final VoidCallback onTap;
 
   const _StudyCard({
@@ -546,6 +650,7 @@ class _StudyCard extends StatelessWidget {
     required this.title,
     required this.newCount,
     required this.dueCount,
+    required this.color,
     required this.onTap,
   });
 
@@ -554,18 +659,32 @@ class _StudyCard extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(13),
                 decoration: BoxDecoration(
-                  color: context.accentSoft,
-                  borderRadius: BorderRadius.circular(8),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      color.withValues(alpha: 0.9),
+                      color.withValues(alpha: 0.65),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: Icon(icon, color: context.accent, size: 28),
+                child: Icon(icon, color: Colors.white, size: 28),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -575,8 +694,8 @@ class _StudyCard extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: context.accent,
+                            fontWeight: FontWeight.w800,
+                            color: context.textPrimary,
                           ),
                     ),
                     const SizedBox(height: 6),
@@ -585,14 +704,14 @@ class _StudyCard extends StatelessWidget {
                         _CountBadge(
                           count: newCount,
                           label: 'new',
-                          color: context.accent,
+                          color: color,
                         ),
                         const SizedBox(width: 8),
                         _CountBadge(
                           count: dueCount,
                           label: 'due',
                           color: dueCount > 0
-                              ? Colors.orange.shade700
+                              ? context.coral
                               : Colors.grey.shade500,
                         ),
                       ],
@@ -600,7 +719,7 @@ class _StudyCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              Icon(Icons.arrow_forward_ios, size: 16, color: context.textFaint),
             ],
           ),
         ),
@@ -641,66 +760,19 @@ class _CountBadge extends StatelessWidget {
   }
 }
 
-/// Conversations card — unlock at 20 mastered items OR Level 5+.
-// TODO: Re-enable _ConversationsCard when AI conversations are ready
-
-class _ComingSoonCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  'assets/images/kuma.png',
-                  width: 48,
-                  height: 48,
-                ),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'AI Conversations',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: context.textSecondary,
-                        ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Coming soon!',
-                    style: TextStyle(fontSize: 12, color: context.textSecondary),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.lock, size: 20, color: context.textFaint),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _MenuButton extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
+  final Color color;
   final VoidCallback onTap;
 
   const _MenuButton({
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.color,
     required this.onTap,
   });
 
@@ -709,18 +781,18 @@ class _MenuButton extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(11),
                 decoration: BoxDecoration(
-                  color: context.accentSoft,
-                  borderRadius: BorderRadius.circular(8),
+                  color: color.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(13),
                 ),
-                child: Icon(icon, color: context.accent, size: 28),
+                child: Icon(icon, color: color, size: 26),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -730,8 +802,8 @@ class _MenuButton extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: context.accent,
+                            fontWeight: FontWeight.w800,
+                            color: context.textPrimary,
                           ),
                     ),
                     const SizedBox(height: 4),
@@ -744,7 +816,7 @@ class _MenuButton extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              Icon(Icons.arrow_forward_ios, size: 16, color: context.textFaint),
             ],
           ),
         ),

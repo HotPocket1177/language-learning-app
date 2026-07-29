@@ -189,7 +189,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
             if (!isHiddenLocked) ...[
               const SizedBox(height: 4),
               Text(
-                achievement.titleJp,
+                achievement.subtitle,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: context.textSecondary,
                     ),
@@ -290,7 +290,7 @@ class _AchievementCard extends StatelessWidget {
               const SizedBox(height: 4),
               if (!isHiddenLocked)
                 Text(
-                  achievement.titleJp,
+                  achievement.subtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 11,

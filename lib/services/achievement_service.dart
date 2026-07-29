@@ -19,7 +19,7 @@ class AchievementService {
     Achievement(
       id: 'first_steps',
       title: 'First Steps',
-      titleJp: '第一歩',
+      subtitle: 'Your journey begins',
       description: 'Complete your first lesson',
       icon: Icons.emoji_people,
       color: Color(0xFF4CAF50),
@@ -28,7 +28,7 @@ class AchievementService {
     Achievement(
       id: 'century_club',
       title: 'Century Club',
-      titleJp: '百語達成',
+      subtitle: 'A hundred strong',
       description: 'Master 100 words',
       icon: Icons.military_tech,
       color: Color(0xFFFF9800),
@@ -36,9 +36,9 @@ class AchievementService {
     ),
     Achievement(
       id: 'polyglot',
-      title: 'Polyglot',
-      titleJp: '多言語学者',
-      description: 'Study 3 or more languages',
+      title: 'Bilingual',
+      subtitle: 'Both sides of the border',
+      description: 'Study both English and Czech',
       icon: Icons.translate,
       color: Color(0xFF9C27B0),
       category: AchievementCategory.milestone,
@@ -46,7 +46,7 @@ class AchievementService {
     Achievement(
       id: 'perfectionist',
       title: 'Perfectionist',
-      titleJp: '完璧主義者',
+      subtitle: 'Flawless run',
       description: 'Get 10 correct answers in a row',
       icon: Icons.verified,
       color: Color(0xFF2196F3),
@@ -57,7 +57,7 @@ class AchievementService {
     Achievement(
       id: 'week_warrior',
       title: 'Week Warrior',
-      titleJp: '一週間の戦士',
+      subtitle: 'Seven days strong',
       description: '7 day study streak',
       icon: Icons.local_fire_department,
       color: Color(0xFFFF5722),
@@ -66,7 +66,7 @@ class AchievementService {
     Achievement(
       id: 'comeback',
       title: 'Comeback',
-      titleJp: '復帰',
+      subtitle: 'Welcome back',
       description: 'Return after a 30 day break',
       icon: Icons.replay,
       color: Color(0xFF607D8B),
@@ -77,7 +77,7 @@ class AchievementService {
     Achievement(
       id: 'night_owl',
       title: 'Night Owl',
-      titleJp: '夜更かし',
+      subtitle: 'Burning the midnight oil',
       description: 'Study after 10pm',
       icon: Icons.nightlight_round,
       color: Color(0xFF3F51B5),
@@ -86,7 +86,7 @@ class AchievementService {
     Achievement(
       id: 'early_bird',
       title: 'Early Bird',
-      titleJp: '早起き',
+      subtitle: 'First light learner',
       description: 'Study before 8am',
       icon: Icons.wb_sunny,
       color: Color(0xFFFFC107),
@@ -97,7 +97,7 @@ class AchievementService {
     Achievement(
       id: 'level_10',
       title: 'Double Digits',
-      titleJp: '二桁レベル',
+      subtitle: 'Level ten reached',
       description: 'Reach level 10',
       icon: Icons.stars,
       color: Color(0xFFFFD700),
@@ -107,7 +107,7 @@ class AchievementService {
     Achievement(
       id: 'xp_500',
       title: 'XP Hunter',
-      titleJp: 'XPハンター',
+      subtitle: 'Points piling up',
       description: 'Earn 500 XP',
       icon: Icons.bolt,
       color: Color(0xFFE91E63),
@@ -117,7 +117,7 @@ class AchievementService {
     Achievement(
       id: 'streak_30',
       title: 'Monthly Master',
-      titleJp: '月間マスター',
+      subtitle: 'A month unbroken',
       description: '30 day study streak',
       icon: Icons.whatshot,
       color: Color(0xFFFF3D00),
@@ -127,7 +127,7 @@ class AchievementService {
     Achievement(
       id: 'words_50',
       title: 'Half Century',
-      titleJp: '五十語',
+      subtitle: 'Fifty words down',
       description: 'Master 50 words',
       icon: Icons.auto_awesome,
       color: Color(0xFF00BCD4),
@@ -137,7 +137,7 @@ class AchievementService {
     Achievement(
       id: 'perfectionist_25',
       title: 'Flawless',
-      titleJp: '完全無欠',
+      subtitle: 'Twenty-five in a row',
       description: '25 correct answers in a row',
       icon: Icons.diamond,
       color: Color(0xFF7C4DFF),
@@ -259,8 +259,8 @@ class AchievementService {
       newly.add(_unlock('comeback'));
     }
 
-    // Polyglot - 3+ languages studied
-    if (!isUnlocked('polyglot') && provider.studiedLanguageCount >= 3) {
+    // Bilingual - studied both available languages
+    if (!isUnlocked('polyglot') && provider.studiedLanguageCount >= 2) {
       newly.add(_unlock('polyglot'));
     }
 
@@ -299,7 +299,7 @@ class AchievementService {
       case 'xp_500':
         return (stats.xp / 500).clamp(0.0, 1.0);
       case 'polyglot':
-        return (provider.studiedLanguageCount / 3).clamp(0.0, 1.0);
+        return (provider.studiedLanguageCount / 2).clamp(0.0, 1.0);
       default:
         return 0.0;
     }
@@ -328,7 +328,7 @@ class AchievementService {
       case 'xp_500':
         return '${stats.xp}/500 XP';
       case 'polyglot':
-        return '${provider.studiedLanguageCount}/3 languages';
+        return '${provider.studiedLanguageCount}/2 languages';
       default:
         return '';
     }

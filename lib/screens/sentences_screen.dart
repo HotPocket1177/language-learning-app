@@ -155,9 +155,22 @@ class _SentencesScreenState extends State<SentencesScreen> {
                       runSpacing: 8,
                       children: categories.map((category) {
                         final isSelected = category == selectedCategory;
+                        final color = context.categoryColor(category);
                         return ChoiceChip(
                           label: Text(category),
                           selected: isSelected,
+                          showCheckmark: false,
+                          labelStyle: TextStyle(
+                            color: isSelected ? Colors.white : color,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'serif',
+                          ),
+                          backgroundColor: color.withValues(alpha: 0.12),
+                          selectedColor: color,
+                          side: BorderSide(
+                            color: color.withValues(
+                                alpha: isSelected ? 0.0 : 0.4),
+                          ),
                           onSelected: (selected) {
                             if (selected) {
                               setState(() {
@@ -210,12 +223,24 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                   '${currentIndex + 1} / ${currentList.length}',
                                   style: Theme.of(context).textTheme.titleMedium,
                                 ),
-                                Text(
-                                  '$selectedCategory',
-                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        color: context.accent,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: context
+                                        .categoryColor(selectedCategory!)
+                                        .withValues(alpha: 0.14),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    '$selectedCategory',
+                                    style: TextStyle(
+                                      color: context
+                                          .categoryColor(selectedCategory!),
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -231,6 +256,15 @@ class _SentencesScreenState extends State<SentencesScreen> {
                                 },
                                 child: Card(
                                   elevation: 8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    side: BorderSide(
+                                      color: context
+                                          .categoryColor(selectedCategory!)
+                                          .withValues(alpha: 0.5),
+                                      width: 2,
+                                    ),
+                                  ),
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.all(32),

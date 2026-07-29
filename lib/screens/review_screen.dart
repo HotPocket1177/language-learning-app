@@ -293,7 +293,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                 emotion: KumaEmotion.celebrating,
                 size: 120,
                 showMessage: true,
-                message: _kumaBubbleText ?? 'Great session! やった! 🎉',
+                message: _kumaBubbleText ?? 'Great session! Well done! 🎉',
                 bubbleTailDirection: BubbleTailDirection.bottom,
               ),
             if (_kumaService.showKuma) const SizedBox(height: 16),

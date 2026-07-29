@@ -41,7 +41,7 @@ enum AchievementCategory {
 class Achievement {
   final String id;
   final String title;
-  final String titleJp;
+  final String subtitle;
   final String description;
   final IconData icon;
   final Color color;
@@ -51,7 +51,7 @@ class Achievement {
   const Achievement({
     required this.id,
     required this.title,
-    required this.titleJp,
+    required this.subtitle,
     required this.description,
     required this.icon,
     required this.color,
